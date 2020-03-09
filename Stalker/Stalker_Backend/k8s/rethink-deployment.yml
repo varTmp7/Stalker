@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rethink
+  labels:
+    name: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: rethink
+  template:
+    metadata:
+      labels:
+        service: rethink
+    spec:
+      containers:
+        - name: rethinkdb
+          image: "rethinkdb"
+          ports:
+            - containerPort: 28015
+              name: rethink
+            - containerPort: 8080
+              name: rethink-dash
+          volumeMounts:
+            - mountPath: /var/lib/rethinkdb/data
+              name: rethink-volume-mount
+      volumes:
+        - name: rethink-volume-mount
+          persistentVolumeClaim:
+            claimName: rethink-pv-claim
+      restartPolicy: Always

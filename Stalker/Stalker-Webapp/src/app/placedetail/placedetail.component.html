@@ -1,0 +1,40 @@
+<form [formGroup]="this.editForm">
+  Value:{{editForm.value | json}}
+  <mat-form-field>
+    <input matInput formControlName="approved">
+  </mat-form-field>
+  <div formGroupName="coordinates">
+    <div formgroupName="coordinate1">
+      <input formControlName="latitude">
+      <input formControlName="longitude">
+    </div>
+    <div formgroupName="coordinate2">
+      <input formControlName="latitude">
+      <input formControlName="longitude">
+    </div>
+    <div formgroupName="coordinate3">
+      <input formControlName="latitude">
+      <input formControlName="longitude">
+    </div>
+    <div formgroupName="coordinate4">
+      <input formControlName="latitude">
+      <input formControlName="longitude">
+    </div>
+  </div>
+  <mat-form-field>
+    <input matInput formControlName="name">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput  formControlName="num_max_people">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput formControlName="number_of_people">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput  formControlName="organization_id">
+  </mat-form-field>
+</form>
+
+<mat-form-field>
+<input value="{{place.name}}">
+</mat-form-field>

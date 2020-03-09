@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Stalker App</string>
+    <string name="stalker">Stalker</string>
+    <string name="seleziona_l_organizzazione">Seleziona l\'organizzazione:</string>
+    <string name="login">Login</string>
+    <string name="nessun_organizzazione_ti_sta_stalkerando">Nessun\'organizzazione ti sta stalkerando!</string>
+    <string name="status">Status</string>
+    <string name="elenco_luoghi">Elenco Luoghi:</string>
+    <string name="elenco_dei_luoghi_tracciati_per_l_organizzazione_selezionata">Elenco dei luoghi tracciati per l\'organizzazione selezionata:</string>
+    <string name="start_track">Start Track</string>
+    <string name="agg">Agg.</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="annulla">Annulla</string>
+    <string name="stop">Stop</string>
+    <string name="conferma">Conferma</string>
+    <string name="not_in_any_place">Non sei in nessun luogo tracciato dell\'organizzazione selezionata!</string>
+    <string name="you_left">Hai lasciato %s</string>
+    <string name="you_are_in">Sei in %s</string>
+</resources>

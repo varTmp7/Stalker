@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item><layer-list>
+        <item>
+            <shape>
+                <solid
+                    android:color="@android:color/white">
+                </solid>
+
+                <corners android:radius="3dp" />
+
+                <padding
+                    android:bottom="10dp"
+                    android:left="10dp"
+                    android:right="10dp"
+                    android:top="10dp" />
+                <stroke
+                    android:width="2dp"
+                    android:color="@android:color/darker_gray"/>
+                <animated-rotate
+                    android:pivotX="50%"
+                    android:pivotY="50%"
+                    android:fromDegrees="0"
+                    android:toDegrees="180"
+                    >
+                    <shape android:shape="ring" android:innerRadiusRatio="3" android:thickness="2dp"
+                        android:thicknessRatio="8" android:useLevel="false">
+
+                        <gradient android:type="sweep" android:useLevel="false"
+                            android:startColor="@android:color/white"
+                            android:centerY="0.50" android:endColor="@android:color/darker_gray" />
+
+                    </shape>
+                </animated-rotate>
+            </shape>
+
+        </item>
+    </layer-list></item>
+</selector>

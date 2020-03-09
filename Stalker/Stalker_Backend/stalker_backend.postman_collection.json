@@ -1,0 +1,384 @@
+{
+	"info": {
+		"_postman_id": "d8b27ea4-41a2-4d2b-95b1-b632a79725e3",
+		"name": "stalker_backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get_organizations",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "905afcfd-36af-4d94-b803-01f88afbf3a9",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://127.0.0.1:5000/organizations",
+					"protocol": "https",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"organizations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_new_organization",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Sindacati\",\n\t\"address\": \"Via Nancy\",\n\t\"city\": \"Padova\",\n\t\"region\": \"Veneto\",\n\t\"postal_code\": \"35010\",\n\t\"nation\": \"Italy\",\n\t\"phone_number\": \"+31234500000\",\n\t\"email\": \"info@inail.it\",\n\t\"type\": \"BOTH\"\n}"
+				},
+				"url": {
+					"raw": "https://127.0.0.1:5000/organizations",
+					"protocol": "https",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"organizations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "edit_organization",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Nuova organizazione\",\n\t\"address\": \"Via molto brutta, 9\",\n\t\"city\": \"Città\",\n\t\"region\": \"Regione\",\n\t\"postal_code\": \"35010\",\n\t\"nation\": \"Italy\",\n\t\"phone_number\": \"+391234567890\",\n\t\"email\": \"org@organizzazione.it\",\n\t\"type\": \"BOTH\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/organizations/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"organizations",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_organization",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://127.0.0.1:5000/organizations/1",
+					"protocol": "https",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"organizations",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_organization",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/organizations/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"organizations",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_new_place",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\t{\r\n    \"coordinates\": [\r\n      {\r\n        \"latitude\": 45.411660,\r\n        \"longitude\": 11.887027\r\n      },\r\n      {\r\n        \"latitude\": 45.411846,\r\n        \"longitude\": 11.887572\r\n      },\r\n      {\r\n        \"latitude\": 45.411730,\r\n        \"longitude\": 11.887650\r\n      },\r\n      {\r\n        \"latitude\": 45.411544,\r\n        \"longitude\": 11.887106\r\n      }\r\n    ],\r\n    \"organization_id\": 3,\r\n    \"name\": \"Inail \",\r\n    \"num_max_people\": 100\r\n  }"
+				},
+				"url": {
+					"raw": "https://127.0.0.1:5000/organizations/1/places",
+					"protocol": "https",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"organizations",
+						"1",
+						"places"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_organization_with_ldap",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Nuova organizazione con LDAP\",\n\t\"address\": \"Via salcazzo, 9\",\n\t\"city\": \"Città\",\n\t\"region\": \"Regione\",\n\t\"postal_code\": \"35010\",\n\t\"nation\": \"Italy\",\n\t\"phone_number\": \"+391234567890\",\n\t\"email\": \"org@organizzazione_ldap.it\",\n\t\"type\": \"PRIVATE\",\n\t\"ldap_url\": \"ldap://yoooooo\",\n\t\"ldap_port\": 389,\n\t\"ldap_common_name\": \"user.account\",\n\t\"ldap_domain_component\": \"org.test.it\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/organizations",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"organizations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_places",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://127.0.0.1:5000/organizations/3/places",
+					"protocol": "https",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"organizations",
+						"3",
+						"places"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_place",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://127.0.0.1:5000/organizations/1/places/4",
+					"protocol": "https",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"organizations",
+						"1",
+						"places",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "edit_place",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\t{\n    \"approved\": false,\n    \"coordinates\": [\n      {\n        \"latitude\": 10.1,\n        \"longitude\": 1.2\n      },\n      {\n        \"latitude\": 20.1,\n        \"longitude\": 2.2\n      },\n      {\n        \"latitude\": 30.1,\n        \"longitude\": 3.2\n      },\n      {\n        \"latitude\": 40.1,\n        \"longitude\": 40.2\n      }\n    ],\n    \"organization_id\": 1,\n    \"name\": \"nuovo luogo\",\n    \"num_max_people\": 100\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/organizations/1/places/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"organizations",
+						"1",
+						"places",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_place",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://127.0.0.1:5000/organizations/1/places/2",
+					"protocol": "https",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"organizations",
+						"1",
+						"places",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_notification_for_app",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json; charset=utf-8",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic ZTg3YzQ2MjEtMTNlMS00YjYxLTlhZjgtYzgyMmYxOWM3YTM4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"app_id\":\"3e5ff952-3804-4704-9cf7-cbef795aacb9\",\r\n\"included_segments\":\"Subscribed Users\",\r\n\"data\": {\"foo\":\" bar\"},\r\n\"contents\": {\"en\": \"DIo cristo che merda\"}\r\n}"
+				},
+				"url": {
+					"raw": "https://onesignal.com/api/v1/notifications",
+					"protocol": "https",
+					"host": [
+						"onesignal",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"notifications"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

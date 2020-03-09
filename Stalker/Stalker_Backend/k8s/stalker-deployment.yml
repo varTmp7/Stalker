@@ -1,0 +1,33 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "stalker-backend" # Nome del deployment
+  namespace: "default"
+  labels:
+    app: "stalker-backend"
+spec:
+  replicas: 1 # Numero di pods che andranno ad eseguire l'immagine
+  selector:
+    matchLabels:
+      app: "stalker-backend"
+  template:
+    metadata:
+      labels:
+        app: "stalker-backend"
+    spec:
+      containers:
+        - name: "stalker-backend"
+          image: "jjocram/stalker-backend:latest" # Repo da dove scaricare l'immagine docker
+          ports:
+            - containerPort: 5000
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  key: user
+                  name: postgres-credentials
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: postgres-credentials

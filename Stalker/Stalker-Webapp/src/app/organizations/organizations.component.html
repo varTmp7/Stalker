@@ -1,0 +1,36 @@
+<h1>Lista di organizzazioni</h1>
+<a mat-raised-button color="primary">New organization</a>
+<div *ngIf="organizations; else noOrganization">
+  <mat-accordion>
+    <div *ngFor="let organization of organizations">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+          {{organization.name}}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div>id: {{organization.id}}</div>
+        <div>Address: {{organization.address}}, {{organization.city}}, {{organization.region}}, {{organization.postal_code}}, {{organization.nation}}</div>
+        <div>Type: {{organization.type}}</div>
+        <div *ngIf="organization.type === 'both' || organization.type === 'private'">
+          LDAP:
+          <ul>
+            <li>Url: {{organization.ldap_url}}</li>
+            <li>Port: {{organization.ldap_port}}</li>
+            <li>Common Name: {{organization.ldap_common_name}}</li>
+            <li>Domain Component: {{organization.ldap_domain_component}}</li>
+          </ul>
+        </div>
+
+        <mat-action-row>
+          <a routerLink="/organizations/{{organization.id}}/places" mat-button>Places</a>
+          <a routerLink="{{organization.id}}/organizationdetail" mat-button>Edit organization</a>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </div>
+  </mat-accordion>
+</div>
+<ng-template #noOrganization>
+  <h2>Nessuna organizzazione. Creane una!</h2>
+</ng-template>

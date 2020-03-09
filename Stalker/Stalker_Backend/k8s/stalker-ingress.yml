@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: stalker-backend-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: stalker-backend.info
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: stalker-backend
+              servicePort: 5000

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "94035938366",
+    "firebase_url": "https://testespresso-f06cd.firebaseio.com",
+    "project_id": "testespresso-f06cd",
+    "storage_bucket": "testespresso-f06cd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94035938366:android:8c149d224a9b9da254956f",
+        "android_client_info": {
+          "package_name": "com.vartmp7.stalker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "94035938366-df3jvdtk7l446pm2bbbdkh5uv2eu5kgq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB39L-rXhB1vc5O2BAtZC7z1t9z7736e4M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "94035938366-df3jvdtk7l446pm2bbbdkh5uv2eu5kgq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

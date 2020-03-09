@@ -1,0 +1,45 @@
+language: android
+os: linux
+jdk: openjdk8
+dist: trusty
+android:
+  components:
+    - sys-img-armeabi-v7a-android-28
+    - build-tools-28.0.3
+    - android-28
+#   - add-on
+#    - extra
+  licenses:
+    - 'android-sdk-preview-license-52d11cd2'
+    - 'android-sdk-license-.+'
+    - 'google-gdk-license-.+'
+#before_script:	
+#  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
+#  - emulator -avd test -no-audio -no-window &	
+#  - android-wait-for-emulator	
+#  - adb shell input keyevent 82 &
+before_install:
+- chmod +x gradlew
+script: sudo ./gradlew test --stacktrace
+install: sudo ./gradlew assembleDebug --stacktrace
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  # Emulator Management: Create, Start and Wait	
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+#before_deploy:
+      # Set up git user name and tag this commit
+ #     - git config --local user.name "WenXiaowei"
+ #     - git config --local user.email "Xiaowei.wen1997@gmail.com"
+ #     - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+  #    - git tag $TRAVIS_TAG
+#deploy:
+#      provider: releases
+#      api_key: "ACCESS_TOKEN"
+#      file: "$HOME/**/*.apk"
+#      skip_cleanup: true
