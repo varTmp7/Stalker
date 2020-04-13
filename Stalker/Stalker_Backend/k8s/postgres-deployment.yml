@@ -19,15 +19,12 @@ spec:
           image: "postgres:12-alpine"
           env:
             - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  key: user
-                  name: postgres-credentials
+              value: 'postgres'
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: password
-                  name: postgres-credentials
+                  name: postgresql-1-secret
           ports:
             - containerPort: 5432
               name: postgres

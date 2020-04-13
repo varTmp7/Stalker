@@ -1,25 +1,32 @@
-from flask import jsonify
+from flask import jsonify, abort
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 
-from ..Models import Organization, Place
+from stalker_backend.Resources.ResourceClass.OrganizationResource import OrganizationResource
+
+from ..Models.Place import Place
 from stalker_backend.ContentProvider.OrganizationContentProvider import OrganizationContentProvider
 from ..Parser.PlaceParser import place_parser
+from stalker_backend.Utils.AuthUtils import organization_token_required, manager_admin_required
 
 
 class PlaceList(Resource):
-    @staticmethod
-    def get(organization_id):
-        org = Organization.Organization.query.get_or_404(organization_id,
-                                                         description='There is no organization with id={}'.format(
-                                                             organization_id))
+    _organization_resource: OrganizationResource = None
 
-        content_provider = OrganizationContentProvider(org.name)
+    def __init__(self, organization_resource):
+        self._organization_resource = organization_resource
+
+    @organization_token_required
+    def get(self, organization_id):
+        organization = self._organization_resource.get_organizations_unsafe(organization_id)
+
+        content_provider = OrganizationContentProvider(organization.name)
 
         places = [place.to_dict() for place in
-                  content_provider.session.query(Place.Place).all()]
+                  content_provider.session.query(Place).all()]
 
         for place in places:
-            place['number_of_people'] = content_provider.get_numeber_of_people(str(place['id'])).run()[
+            place['number_of_people'] = content_provider.get_number_of_people(str(place['id'])).run()[
                 'number_of_people']
 
         response = jsonify({'places': places})
@@ -28,31 +35,22 @@ class PlaceList(Resource):
 
         return response
 
-    @staticmethod
-    def post(organization_id):
-        org = Organization.Organization.query.get_or_404(organization_id,
-                                                         description='There is no organization with id={}'.format(
-                                                             organization_id))
-
-        content_provider = OrganizationContentProvider(org.name)
+    @jwt_required
+    @manager_admin_required
+    def post(self, organization_id):
         place = place_parser.parse_args()
+        if len(place['coordinates']) != 4:
+            abort(400, description="Exactly 4 coordinates are requested to create a place")
 
-        new_place = Place.Place(place['name'],
-                                place['coordinates'][0]['latitude'],
-                                place['coordinates'][0]['longitude'],
-                                place['coordinates'][1]['latitude'],
-                                place['coordinates'][1]['longitude'],
-                                place['coordinates'][2]['latitude'],
-                                place['coordinates'][2]['longitude'],
-                                place['coordinates'][3]['latitude'],
-                                place['coordinates'][3]['longitude'],
-                                place['num_max_people'],
-                                place['organization_id'])
+        organization, admin_representation, content_provider = self._organization_resource.get_organization(
+            organization_id)
+
+        new_place = Place(place)
 
         content_provider.create_new_place(new_place)
 
         # Return place created
-        created_place = content_provider.session.query(Place.Place).get(new_place.id).to_dict()
+        created_place = content_provider.session.query(Place).get(new_place.id).to_dict()
         response = jsonify({'place': created_place})
         response.status_code = 200
         response.headers['req_code'] = 6

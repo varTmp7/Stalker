@@ -2,15 +2,15 @@ from stalker_backend.Models import Organization
 
 
 def test_new_organization_public():
-    organization = Organization.Organization("Nome",
-                                             "Indirizzo",
-                                             "città",
-                                             "regione",
-                                             "35010",
-                                             "nazione",
-                                             "+391234567890",
-                                             "organizzazione@org.it",
-                                             "PUBLIC")
+    organization = Organization.Organization({'name': "Nome",
+                                              'address': "Indirizzo",
+                                              'city': "città",
+                                              'region': "regione",
+                                              'postal_code': "35010",
+                                              'nation': "nazione",
+                                              'phone_number': "+391234567890",
+                                              'email': "organizzazione@org.it",
+                                              'type': "PUBLIC"})
     assert organization.name == "Nome"
     assert organization.address == "Indirizzo"
     assert organization.city == "città"
@@ -27,19 +27,19 @@ def test_new_organization_public():
 
 
 def test_new_organization_private():
-    organization = Organization.Organization("Nome_ldap",
-                                             "Indirizzo_ldap",
-                                             "città_ldap",
-                                             "regione_ldap",
-                                             "35010",
-                                             "nazione_ldap",
-                                             "+391234567890",
-                                             "organizzazione_ldap@org.it",
-                                             "PRIVATE",
-                                             "url-for-ldap",
-                                             389,
-                                             "users.accounts",
-                                             "org.organization")
+    organization = Organization.Organization({'name': "Nome_ldap",
+                                              'address': "Indirizzo_ldap",
+                                              'city': "città_ldap",
+                                              'region': "regione_ldap",
+                                              'postal_code': "35010",
+                                              'nation': "nazione_ldap",
+                                              'phone_number': "+391234567890",
+                                              'email': "organizzazione_ldap@org.it",
+                                              'type': "PRIVATE",
+                                              'ldap_url': "url-for-ldap",
+                                              'ldap_port': 389,
+                                              'ldap_common_name': "users.accounts",
+                                              'ldap_domain_component': "org.organization"})
     assert organization.name == "Nome_ldap"
     assert organization.address == "Indirizzo_ldap"
     assert organization.city == "città_ldap"

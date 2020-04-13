@@ -1,0 +1,38 @@
+<h1>Lista luoghi</h1>
+<a mat-raised-button color="primary" routerLink="organizations/{{organizationId}}/newplace">New place</a>
+<div *ngIf="places; else noPlace">
+  <mat-accordion>
+    <div *ngFor="let place of places">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{place.name}}
+          </mat-panel-title>
+          <mat-panel-description>
+            Number of people inside: {{place.number_of_people}}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div>id: {{place.id}}</div>
+        <div>organization_id: {{place.organization_id}}</div>
+        <div>Maximum number of people: {{place.num_max_people}}</div>
+        <div>
+          Coordinates:
+          <ul>
+            <li *ngFor="let coordinate of place.coordinates">
+              <div>Latitude: {{coordinate.latitude}}</div>
+              <div>Longitude: {{coordinate.longitude}}</div>
+            </li>
+          </ul>
+        </div>
+        <mat-action-row>
+          <a routerLink="{{place.id}}/tracks" mat-button>Tracks</a>
+          <a routerLink="{{place.id}}/placedetail" mat-button>Edit Place</a>
+        </mat-action-row>
+      </mat-expansion-panel>
+    </div>
+  </mat-accordion>
+</div>
+<ng-template #noPlace>
+  <h2>Nessun luogo. Creane uno!</h2>
+</ng-template>

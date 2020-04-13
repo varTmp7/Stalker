@@ -4,24 +4,41 @@ jdk: openjdk8
 dist: trusty
 android:
   components:
-    - sys-img-armeabi-v7a-android-28
-    - build-tools-28.0.3
-    - android-28
-#   - add-on
-#    - extra
+    - sys-img-armeabi-v7a-android-29
+    - build-tools-29.0.3
+    - platform-tools
+    - android-29
+    - add-on
+    - extra
   licenses:
     - 'android-sdk-preview-license-52d11cd2'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
+    - 'android-sdk-license-28.+'
+    - 'google-gdk-license-28.+'
+    - 'android-sdk-license-29.+'
+    - 'google-gdk-license-29.+'
 #before_script:	
 #  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
 #  - emulator -avd test -no-audio -no-window &	
 #  - android-wait-for-emulator	
 #  - adb shell input keyevent 82 &
 before_install:
-- chmod +x gradlew
-script: sudo ./gradlew test --stacktrace
+ - chmod +x gradlew
+ - touch $HOME/.android/repositories.cfg
+ - yes | sdkmanager "platforms;android-28"
+ - yes | sdkmanager "build-tools;28.0.3"
+script:
+    - sudo ./gradlew test --stacktrace
+
+after_success:
+  - ./gradlew check jacocoTestReport coveralls    
+
+after_failure:
+  - ./gradlew clean check --debug
+
 install: sudo ./gradlew assembleDebug --stacktrace
+
+
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/

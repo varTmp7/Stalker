@@ -1,53 +1,44 @@
 from flask import jsonify, Response
 from flask_restful import Resource
 
+from stalker_backend.Resources.ResourceClass.OrganizationResource import OrganizationResource
+
 from ..Parser.OrganizationParser import organization_parser
 from ..Models import Organization
-from ..ContentProvider import OrganizationContentProvider
+
+from flask_jwt_extended import jwt_required
+from stalker_backend.Utils.AuthUtils import watcher_admin_required, manager_admin_required, owner_admin_required
 
 
 class OrganizationItem(Resource):
+    _organization_resource: OrganizationResource = None
 
-    @staticmethod
-    def get(organization_id):
-        organization = Organization.Organization.query.get(organization_id)
-        if not organization:
-            response = jsonify({'error': 'organizzazione non trovata'})
-            response.status_code = 404
-            response.headers['req_code'] = 2
-            return response
+    def __init__(self, organization_resource):
+        self._organization_resource = organization_resource
 
-        response = jsonify(organization.to_dict())
+    @jwt_required
+    @watcher_admin_required
+    def get(self, organization_id):
+        organization = self._organization_resource.get_organization(organization_id)[0]
+
+        organization_dict = organization.to_dict()
+        organization_dict['token'] = organization.token
+        response = jsonify(organization_dict)
+
         response.status_code = 200
         response.headers['req_code'] = 2
         return response
 
-    @staticmethod
-    def put(organization_id):
-        args = organization_parser.parse_args()
-        organization = Organization.Organization.query.get(organization_id)
-        if not organization:
-            response = jsonify({'error': 'organizzazione non trovata'})
-            response.status_code = 404
-            response.headers['req_code'] = 3
-            return response
+    @jwt_required
+    @manager_admin_required
+    def put(self, organization_id):
+        organization_edited = organization_parser.parse_args()
+        organization, admin_representation, content_provider = self._organization_resource.get_organization(
+            organization_id)
 
-        OrganizationContentProvider.OrganizationContentProvider(organization.name).changed_organization_name(organization.name, args['name'])
+        content_provider.changed_organization_name(organization.name, organization_edited['name'])
 
-        organization.edit(args['name'],
-                          args['address'],
-                          args['city'],
-                          args['region'],
-                          args['postal_code'],
-                          args['nation'],
-                          args['phone_number'],
-                          args['email'],
-                          args['type'],
-                          args['ldap_url'],
-                          args['ldap_port'],
-                          args['ldap_domain_component'],
-                          args['ldap_common_name'],
-                          )
+        organization.edit(organization_edited)
         Organization.db.session.commit()
 
         # return the modified organization
@@ -57,25 +48,17 @@ class OrganizationItem(Resource):
         response.headers['req_code'] = 3
         return response
 
-    @staticmethod
-    def delete(organization_id):
-        organization = Organization.Organization.query.get(organization_id)
-        if not organization:
-            response = Response()
-            response.status_code = 404
-            return response
+    @jwt_required
+    @owner_admin_required
+    def delete(self, organization_id):
+        organization, admin_representation, content_provider = self._organization_resource.get_organization(
+            organization_id)
 
         Organization.db.session.delete(organization)
         Organization.db.session.commit()
 
-        deleted_place = Organization.Organization.query.get(organization.id)
-        if not deleted_place:
-            response = Response()
-            response.status_code = 200
-            response.headers['req_code'] = 4
-            return response
-        else:
-            response = Response()
-            response.status_code = 400
-            response.headers['req_code'] = 4
-            return response
+        response = Response()
+        response.status_code = 200
+        response.headers['req_code'] = 4
+        return response
+

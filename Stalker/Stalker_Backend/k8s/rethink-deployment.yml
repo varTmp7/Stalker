@@ -24,9 +24,13 @@ spec:
               name: rethink-dash
           volumeMounts:
             - mountPath: /var/lib/rethinkdb/data
-              name: rethink-volume-mount
+              name: storage
       volumes:
-        - name: rethink-volume-mount
-          persistentVolumeClaim:
-            claimName: rethink-pv-claim
+        #- name: rethink-volume-mount
+        - persistentVolumeClaim:
+            claimName: rethink-pvc
+        #- gcePersistentDisk:
+        #    fsType: ext4
+        #    pdName: rethink-storage
+          name: storage
       restartPolicy: Always

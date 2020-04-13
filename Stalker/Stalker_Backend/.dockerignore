@@ -1,0 +1,16 @@
+.pytest_cache
+images
+instance
+k8s
+stalker_backend.postman_collection.json
+stalker_backend.egg-info
+testing_thing
+tests
+venv
+.coverage
+.gitignore
+.travis.yml
+coverage.xml
+docker-compose.yml
+README.md
+skaffold.yaml

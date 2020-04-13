@@ -1,5 +1,6 @@
 from stalker_backend import db_alchemy as db
 
+
 class Track(db.Model):
     __tablename__ = "tracks"
 
@@ -13,14 +14,14 @@ class Track(db.Model):
 
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
 
-    def __init__(self, entered, uid_number, username, name, surname, date_time, place_id):
-        self.entered = entered
-        self.uidNumber = uid_number
-        self.username = username
-        self.name = name
-        self.surname = surname
-        self.dateTime = date_time
-        self.place_id = place_id
+    def __init__(self, track):
+        self.entered = track.get('entered')
+        self.uidNumber = track.get('uid_number')
+        self.username = track.get('username')
+        self.name = track.get('name')
+        self.surname = track.get('surname')
+        self.dateTime = track.get('date_time')
+        self.place_id = track.get('place_id')
 
     def to_dict(self):
         return {

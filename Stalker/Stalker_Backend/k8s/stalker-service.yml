@@ -1,14 +1,16 @@
 apiVersion: v1
-kind: "Service"
+kind: Service
 metadata:
-  name: "stalker-backend"
-  namespace: "default"
+  name: stalker-backend
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
   labels:
-    app: "stalker-backend"
+    app: stalker-backend
 spec:
-  type: "NodePort"
+  type: NodePort
   selector:
-    app: "stalker-backend"
+    app: stalker-backend
   ports:
-    - port: 5000
+    - protocol: TCP
+      port: 80
       targetPort: 5000

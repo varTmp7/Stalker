@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "94035938366",
-    "firebase_url": "https://testespresso-f06cd.firebaseio.com",
-    "project_id": "testespresso-f06cd",
-    "storage_bucket": "testespresso-f06cd.appspot.com"
+    "project_number": "543529788745",
+    "firebase_url": "https://stalker-ad75c.firebaseio.com",
+    "project_id": "stalker-ad75c",
+    "storage_bucket": "stalker-ad75c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:94035938366:android:8c149d224a9b9da254956f",
+        "mobilesdk_app_id": "1:543529788745:android:d2f2b2ec46c152eebea698",
         "android_client_info": {
           "package_name": "com.vartmp7.stalker"
         }
       },
       "oauth_client": [
         {
-          "client_id": "94035938366-df3jvdtk7l446pm2bbbdkh5uv2eu5kgq.apps.googleusercontent.com",
+          "client_id": "543529788745-c4evvu68e5n5bait8lic3qs3hmttnk53.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB39L-rXhB1vc5O2BAtZC7z1t9z7736e4M"
+          "current_key": "AIzaSyA1q_lGPjnkSeXkq2e3rKYPgVi5xOa0zZc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "94035938366-df3jvdtk7l446pm2bbbdkh5uv2eu5kgq.apps.googleusercontent.com",
+              "client_id": "543529788745-c4evvu68e5n5bait8lic3qs3hmttnk53.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

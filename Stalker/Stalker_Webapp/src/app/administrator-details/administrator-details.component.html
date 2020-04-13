@@ -1,0 +1,35 @@
+<mat-card>
+    <mat-card-header>
+      <mat-card-title>Administrator Details</mat-card-title>
+    </mat-card-header>
+    <form class="edit-form" [formGroup]="editForm" (ngSubmit)="editUser(editForm.value)">
+      <mat-card-content>
+      <mat-form-field appearance="fill">
+        <mat-label>Firstname</mat-label>
+        <input matInput type="text" formControlName="firstname" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Lastname</mat-label>
+        <input matInput type="text" formControlName="lastname" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" required>
+      </mat-form-field>
+       <div>
+        <button *ngIf="!showField" mat-raised-button color="primary" (click)="onClick()">Change Password</button>
+        <button *ngIf="showField" mat-raised-button color="primary" (click)="onClick()">Cancel</button>
+        <p *ngIf=showField>
+          <mat-form-field appearance="fill">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" formControlName="password">
+          </mat-form-field>
+        </p>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <a mat-raised-button color="primary" [disabled]="!editForm.valid">Save changes</a>
+    </mat-card-actions>
+    </form>
+  </mat-card>
+  

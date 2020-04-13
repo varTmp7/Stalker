@@ -1,14 +1,13 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: rethink-pv-claim
-  labels:
-    type: local
+  finalizers:
+  - kubernetes.io/pvc-protection
+  name: rethink-pvc
+  namespace: default
 spec:
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
   resources:
     requests:
       storage: 2Gi
-  volumeName: rethink-pv
-  storageClassName: standard

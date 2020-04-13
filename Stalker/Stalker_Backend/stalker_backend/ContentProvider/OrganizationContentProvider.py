@@ -1,21 +1,17 @@
 import hashlib
-import os
 
 from flask_restful import abort
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Query, make_transient
 from sqlalchemy_utils import database_exists, create_database
 from rethinkdb import RethinkDB
-from rethinkdb.errors import ReqlDriverError
+from rethinkdb.errors import ReqlDriverError, ReqlOpFailedError
 
 from stalker_backend.Models import Place, Track
-from stalker_backend.config import POSTGRES_USER, POSTGRES_PASSWORD, RETHINK_URL
-
+from stalker_backend.config import get_db_url, get_rethink_url
 
 class ExtendedQuery(Query):
     def get_or_404(self, ident, description=None):
-        """Like :meth:`get` but aborts with 404 if not found instead of returning ``None``."""
-
         rv = self.get(ident)
         if rv is None:
             abort(404, description=description)
@@ -37,10 +33,7 @@ class OrganizationContentProvider:
 
     def __init__(self, organization_name):
         self.name_hash = hashlib.sha256(organization_name.encode('utf-8')).hexdigest()
-        if os.environ.get('NOT_K8S'):
-            self.db_url = 'sqlite:///{}.sqlite'.format(self.name_hash)
-        else:
-            self.db_url = "postgres://{}:{}@postgres:5432/{}".format(POSTGRES_USER, POSTGRES_PASSWORD, self.name_hash)
+        self.db_url = get_db_url(self.name_hash)
         self.db = create_engine(self.db_url)
 
         if not database_exists(self.db.url):
@@ -50,10 +43,7 @@ class OrganizationContentProvider:
         Track.Track.metadata.create_all(self.db)
         self.session = Session(bind=self.db, query_cls=ExtendedQuery)
 
-        try:
-            self.rethink_connection.connect(RETHINK_URL, 28015).repl()
-        except (ConnectionRefusedError, ReqlDriverError):
-            abort(500, description="Failed to connect to RethinkDB")
+        self.rethink_connection.connect(get_rethink_url(), 28015).repl()
 
         # assumiamo per vero che il DB 'stalker_organizations' esista in quanto creato a priori (vedere __init__.py)
         self.__rethink_db = self.rethink_connection.db('stalker_organizations')
@@ -66,7 +56,7 @@ class OrganizationContentProvider:
     def __del__(self):
         self.session.close()
 
-    def get_numeber_of_people(self, place_id):
+    def get_number_of_people(self, place_id):
         return self.rethink_organization.get(place_id)
 
     def add_new_track(self, track, entered, place_id):
@@ -74,11 +64,11 @@ class OrganizationContentProvider:
             self.session.add(track)
             self.session.commit()
 
-        if entered == True:  # Una persona entra nel luogo idicato
+        if entered:  # Una persona entra nel luogo idicato
             self.rethink_organization.get(place_id).update(
                 {'number_of_people': self.rethink_connection.row['number_of_people'] + 1}).run()
         else:
-            pass  # Una persona esce dal luogo indicato
+            # Una persona esce dal luogo indicato
             self.rethink_organization.get(place_id).update(
                 {'number_of_people': self.rethink_connection.row['number_of_people'] - 1}).run()
 
@@ -93,19 +83,22 @@ class OrganizationContentProvider:
         self.session.commit()
 
     def delete_organization(self):
-        self.__rethink_db.table_drop(self.name_hash).run()
+        try:
+            self.__rethink_db.table_drop(self.name_hash).run()
+            return True
+        except ReqlOpFailedError as e:
+            print("Organization already deleted")
+            print(e)
+            return False
 
     def changed_organization_name(self, old_name, new_name):
         if old_name == new_name:
-            return
+            return None
 
         # Update of name_hash property
         new_name_hash = hashlib.sha256(new_name.encode('utf-8')).hexdigest()
 
-        if os.environ.get('NOT_K8S'):
-            new_db_url = 'sqlite:///{}.sqlite'.format(new_name_hash)
-        else:
-            new_db_url = "postgres://{}:{}@postgres:5432/{}".format(POSTGRES_USER, POSTGRES_PASSWORD, new_name_hash)
+        new_db_url = get_db_url(new_name_hash)
         new_db = create_engine(new_db_url)
 
         if not database_exists(new_db.url):

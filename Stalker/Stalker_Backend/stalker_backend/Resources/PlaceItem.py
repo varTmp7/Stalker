@@ -1,82 +1,59 @@
-from flask import jsonify, Response
+from flask import jsonify, Response, abort
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 
+from .ResourceClass.PlaceResource import PlaceResource
+
 from ..Parser.PlaceParser import place_parser
-from stalker_backend.ContentProvider.OrganizationContentProvider import OrganizationContentProvider
-from ..Models import Organization, Place
+from ..Models.Place import Place
+from stalker_backend.Utils.AuthUtils import organization_token_required, manager_admin_required, owner_admin_required
 
 
 class PlaceItem(Resource):
+    _place_resource: PlaceResource = None
 
-    @staticmethod
-    def get(organization_id, place_id):
-        org = Organization.Organization.query.get_or_404(organization_id,
-                                                         description='There is no organization with id={}'.format(
-                                                             organization_id))
+    def __init__(self, place_resource):
+        self._place_resource = place_resource
 
-        content_provider = OrganizationContentProvider(org.name)
-        place = content_provider.session.query(Place.Place).get_or_404(place_id,
-                                                                       description='There is no place with id={}'.format(
-                                                                           place_id))
+    @organization_token_required
+    def get(self, organization_id, place_id):
+        place, organization, content_provider = self._place_resource.get_place_unsafe(organization_id, place_id)
+
         place_info = place.to_dict()
-        place_info['number_of_people'] = content_provider.get_numeber_of_people(str(place_info['id'])).run()[
+        place_info['number_of_people'] = content_provider.get_number_of_people(str(place_info['id'])).run()[
             'number_of_people']
         response = jsonify(place_info)
         response.status_code = 200
         response.headers['req_code'] = 7
         return response
 
-    @staticmethod
-    def put(organization_id, place_id):
-        args = place_parser.parse_args()
-        org = Organization.Organization.query.get_or_404(organization_id,
-                                                         description='There is no organization with id={}'.format(
-                                                             organization_id))
+    @jwt_required
+    @manager_admin_required
+    def put(self, organization_id, place_id):
+        edited_place = place_parser.parse_args()
 
-        content_provider = OrganizationContentProvider(org.name)
-        place = content_provider.session.query(Place.Place).get_or_404(place_id,
-                                                                       description='There is no place with id={}'.format(
-                                                                           place_id))
-        place.edit(args['name'],
-                   args['coordinates'][0]['latitude'],
-                   args['coordinates'][0]['longitude'],
-                   args['coordinates'][1]['latitude'],
-                   args['coordinates'][1]['longitude'],
-                   args['coordinates'][2]['latitude'],
-                   args['coordinates'][2]['longitude'],
-                   args['coordinates'][3]['latitude'],
-                   args['coordinates'][3]['longitude'],
-                   args['num_max_people'])
+        place, organization, admin_representation, content_provider = self._place_resource.get_place(organization_id,
+                                                                                                     place_id)
+
+        place.edit(edited_place)
         content_provider.session.commit()
 
         # return the modified place
-        modified_place = content_provider.session.query(Place.Place).get(place.id).to_dict()
+        modified_place = content_provider.session.query(Place).get(place.id).to_dict()
         response = jsonify(modified_place)
         response.status_code = 200
         response.headers['req_code'] = 8
         return response
 
-    @staticmethod
-    def delete(organization_id, place_id):
-        org = Organization.Organization.query.get_or_404(organization_id,
-                                                         description='There is no organization with id={}'.format(
-                                                             organization_id))
-
-        content_provider = OrganizationContentProvider(org.name)
-        place = content_provider.session.query(Place.Place).get_or_404(place_id,
-                                                                       description='There is no place with id={}'.format(
-                                                                           place_id))
+    @jwt_required
+    @owner_admin_required
+    def delete(self, organization_id, place_id):
+        place, organization, admin_representation, content_provider = self._place_resource.get_place(organization_id,
+                                                                                                     place_id)
 
         content_provider.delete_place(place)
 
-        deleted_place = content_provider.session.query(Place.Place).get(place.id)
-        if not deleted_place:
-            response = Response()
-            response.status_code = 200
-            response.headers['req_code'] = 4
-            return response
-        else:
-            response = Response()
-            response.status_code = 400
-            response.headers['req_code'] = 4
-            return response
+        response = Response()
+        response.status_code = 200
+        response.headers['req_code'] = 4
+        return response

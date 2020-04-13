@@ -361,7 +361,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\"app_id\":\"3e5ff952-3804-4704-9cf7-cbef795aacb9\",\r\n\"included_segments\":\"Subscribed Users\",\r\n\"data\": {\"foo\":\" bar\"},\r\n\"contents\": {\"en\": \"DIo cristo che merda\"}\r\n}"
+					"raw": "{\r\n\"app_id\":\"0549f894-64ee-40c5-8045-b00f6d70ed4f\",\r\n\"included_segments\":\"Subscribed Users\",\r\n\"data\": {\"foo\":\" bar\"},\r\n\"contents\": {\"en\": \"DIo cristo che merda\"}\r\n}"
 				},
 				"url": {
 					"raw": "https://onesignal.com/api/v1/notifications",

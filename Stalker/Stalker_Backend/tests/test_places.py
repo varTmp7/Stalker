@@ -1,11 +1,13 @@
 import pytest
 
-from .config_test import test_client, init_db, payload_place_model, init_db_organization
+from .config_test import test_client, init_db, get_payload_place_model, init_db_organization, get_organization_token, \
+    get_admin_token
 
 
 def test_get_places(test_client, init_db, init_db_organization):
-    response = test_client.get('/organizations/1/places')
-    assert response.status_code == 200
+    response = test_client.get('/organizations/1/places',
+                               headers={'Organization-Token': get_organization_token()})
+    assert response.status_code == 200, response.get_json()
     assert response.headers['req_code'] == '5'
     places = response.get_json()['places']
     assert len(places) == 3
@@ -24,8 +26,10 @@ def test_get_places(test_client, init_db, init_db_organization):
 
 
 def test_create_new_place(test_client, init_db, init_db_organization):
-    response = test_client.post('/organizations/1/places', json=payload_place_model)
-    assert response.status_code == 200
+    response = test_client.post('/organizations/1/places',
+                                json=get_payload_place_model(),
+                                headers={'Authorization': get_admin_token(test_client, 'o_a@gmail.com')})
+    assert response.status_code == 200, response.get_json()
     assert response.headers['req_code'] == '6'
     place = response.get_json()['place']
 
@@ -43,22 +47,56 @@ def test_create_new_place(test_client, init_db, init_db_organization):
     assert place['coordinates'][3]['longitude'] == 4.2
     assert place['num_max_people'] == 100
 
-    check_p_res = test_client.get("/organizations/1/places")
+    check_p_res = test_client.get("/organizations/1/places",
+                                  headers={'Organization-Token': get_organization_token()})
     check_ps = check_p_res.get_json()
     assert len(check_ps['places']) == 4
 
 
+def test_create_place_without_coordinates(test_client, init_db, init_db_organization):
+    wrong_place_model = get_payload_place_model()
+    del wrong_place_model['coordinates'][0]
+
+    response = test_client.post('/organizations/1/places',
+                                json=wrong_place_model,
+                                headers={'Authorization': get_admin_token(test_client, 'o_a@gmail.com')})
+    assert response.status_code == 400, response.get_json()
+    assert response.get_json()['message'] == 'Exactly 4 coordinates are requested to create a place'
+
+
+def test_create_place_with_wrong_json(test_client, init_db, init_db_organization):
+    wrong_place_model = get_payload_place_model()
+    del wrong_place_model['coordinates'][0]['latitude']
+
+    response = test_client.post('/organizations/1/places',
+                                json=wrong_place_model,
+                                headers={'Authorization': get_admin_token(test_client, 'o_a@gmail.com')})
+    assert response.status_code == 400, response.get_json()
+    assert response.get_json()['message'] == {'coordinates': 'Latitude and longitude is required for every node'}
+
+
 def test_edit_place(test_client, init_db, init_db_organization):
-    modified_payload = payload_place_model
+    modified_payload = get_payload_place_model()
     modified_payload['name'] = "nome luogo modificato"
-    response = test_client.put('/organizations/1/places/1', json=modified_payload)
-    assert response.status_code == 200
+    response = test_client.put('/organizations/1/places/1',
+                               json=modified_payload,
+                               headers={'Authorization': get_admin_token(test_client, 'o_a@gmail.com')})
+    assert response.status_code == 200, response.get_json()
     assert response.headers['req_code'] == '8'
     modified_place = response.get_json()
     assert modified_place['name'] == "nome luogo modificato"
-    assert modified_place['approved'] == False
+    assert not modified_place['approved']
 
 
 def test_delete_place(test_client, init_db, init_db_organization):
-    response = test_client.delete('/organizations/1/places/1')
-    assert response.status_code == 200
+    response = test_client.delete('/organizations/1/places/1',
+                                  headers={'Authorization': get_admin_token(test_client, 'o_a@gmail.com'),})
+    assert response.status_code == 200, response.get_json()
+
+
+def test_try_to_get_info_about_a_place_that_doesnt_exist(test_client, init_db, init_db_organization):
+    response = test_client.get('/organizations/1/places/10',
+                               headers={'Authorization': get_admin_token(test_client, 'o_a@gmail.com'),
+                                        'Organization-Token': get_organization_token()})
+    assert response.status_code == 404, response.get_json()
+    assert response.get_json()['description'] == "There is no place with id=10"

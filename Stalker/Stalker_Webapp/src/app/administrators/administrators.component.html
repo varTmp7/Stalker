@@ -1,0 +1,16 @@
+<div class="left">
+    <mat-form-field>
+        <mat-label>Select organization</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let organization of organizations" [value]="organization.name" [routerLink]="[organization.id]">
+            {{organization.name}}
+          </mat-option>
+          <mat-option value="New organization" >
+             <button mat-raised-button color="primary" routerLink="">New organization</button>  
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+</div>
+<div class="right">
+    <router-outlet></router-outlet>
+</div>

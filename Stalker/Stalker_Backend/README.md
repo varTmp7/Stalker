@@ -1,9 +1,10 @@
+[![Build Status](https://travis-ci.com/jjocram/Stalker_backend.svg?token=8wzKzqsp6qAuap6sUEmG&branch=master)](https://travis-ci.com/jjocram/Stalker_backend)
 # Stalker-Backend
 Questo repository contiene il backend del progetto Stalker, capitolato C5 per il corso di Ingegneria del Software, Università degli studi di Padova, A.A. 2019/2020.
 
 # Istruzioni per l'uso
 Testato su MacOS 10.15.3, Python 3.7.6, Flask 1.1.1
-## Metodo classico (full locale)
+## Metodo classico (full locale) **sconsigliato, meglio docker-compose**
 1. Installare le dipendenze necessarie
     ```bash
     pip3 install -r requirements.txt
@@ -12,8 +13,23 @@ Testato su MacOS 10.15.3, Python 3.7.6, Flask 1.1.1
     ```bash
     export FLASK_APP=stalker_backend
     export FLASK_ENV=development
-    export NOT_K8S="1"
+    export RETHINK_URL=localhost
+    export DATABASE_TYPE=sqlite:///
+    export TESTING=True
+    export FLASK_DEBUG=True
+    export EMAIL_PASSWORD={PASSWORD-DELL-ACCOUNT-GMAIL-vartmp7@gmail.com}
+    export MAIL_SUPPRESS_SEND=Flase #con True tenterà di mandare le email ai nuovi amministratori
     ```
+   - RETHINK_URL è l'url del database rethink, se si usa RethinkDB in locale con Docker (punto 3) usare localhost
+   - DATABASE_TYPE è il tipo di database, i valori possibili, al momento sono:
+        - `sqlite:///`
+        - `postgres://`
+    
+        In caso si usi postgres è necessario indicare l'url (compreso di username e password) del server Postgres alla quale ci si vuole connettere
+        ```bash
+        export BASE_POSTGRES_URL={POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}
+        ```
+        sostituire ciò che c'è le parentesi graffe con i dati corretti.
 3. Avviare il container [docker](https://www.docker.com) di RethinkDB facendo il binding delle porte necessarie (**attenzione, quando il container viene killato si perdono tutti i dati all'interno**)
     ```bash
    docker run -d -p 28015:28015 -p 8080:8080 --name rethink rethinkdb
@@ -32,47 +48,101 @@ Testato su MacOS 10.15.3, Python 3.7.6, Flask 1.1.1
    ```bash
     flask run --cert=adhoc
     ```
-## Tramite K8S (Kubernetes/Skaffold)
+## ~~Tramite K8S (Kubernetes/Skaffold)~~ NON AUTOMATCO AL 100%
 1. Avviare il tutto tramite l'utility [Skaffold](https://skaffold.dev)
     ```bash
     skaffold dev --port-forward
     ```
 2. Una volta avviato (usare la Dashboard o k9s per sapere quando è tutto OK) l'app può essere raggiunta all'indirizzo `127.0.0.1:5000`
 
+## Tramite docker-compose
+1. Configurare la shell
+   ```bash
+   export EMAIL_PASSWORD={PASSWORD-DELL-ACCOUNT-GMAIL-vartmp7@gmail.com}  
+   export LOCAL_HTTPS=1 # da settare solo se si vuole usare una connessione https con un certificato self-signed
+   ```
+2. avviare i container con docker-compose
+    ```bash
+   docker-compose up 
+   ```
+
+## Tramite Makefile
+Viene fornito un Makefile con delle regole utili all'avvio del backend
+- `make start-backend`
+- `make start-backend-https`
+
+È anche possibile eseguire i test con il Makefile fornito
+- `make run-tests`
+- `make run-tests-with-coverage`
+
+# Tests
+Viene usata la libreria pytest.
+
+eseguire il comando 
+```bash
+make run-tests-with-coverage
+```
+per eseguire la suite di tests (verrà usato docker-compose per avviare i servizi di postgresql e RethinkDB).
+Verrà inoltre generati il file `coverage.xml` usabile in SonarQube per ottenere info riguardo allo stato e alla code coverage del progetto.
+
 # Descrizione API
 Ogni chiamata ad un API restituisce un valore (req_code) nell'header della risposta.
+Viene inoltro descritto il tipo di autenticazione necessario per accedere all'api
 - **/organizations**
     - **GET**: lista di tutte le organizzazioni
         - _req_code_: 0
+        - Organization-Token
     - **POST**: creazione di una nuova organizzazione
         - _req_code_: 1
+        - Authorization (@owner_admin_required)
 - **/organizations/<organization_id>**
     - **GET**: restituisce le info dell’organizzazione di id <organization_id>
         - _req_code_: 2
+        - Authorization (@watcher_admin_required)
 	- **PUT**: modifica l’organizzazione di id <organization_id>
 	    - _req_code_: 3
+	    - Authorization (@manager_admin_required)
 	- **DELETE**: elimina l’organizzazione di id <organization_id>
 	    - _req_code_: 4
+	    - Authorization (@owner_admin_required)
 - **/organizations/<organization_id>/places**
     - **GET**: restituisce la lista con tutte i luoghi dell’organizzazione di id <organization_id>
         - _req_code_: 5
+        - Organization-Token 
 	- **POST**: crea un nuovo luogo per l’organizzazione di id <organization_id>
 	    - _req_code_: 6
+	    - Authorization (@manager_admin_required)
 - **/organizations/<organization_id>/places/<place_id>**
 	- **GET**: restituisce le info del luogo di id <id_place> dell’organizzazione di id <organization_id>
 	    - _req_code_: 7
+	    - Authorization (@watcher_admin_required)
 	- **PUT**: modifica il luogo di id <place_id> dell’organizzazione di id <organization_id>
 	    - _req_code_: 8
+	    - Authorization (@manager_admin_required)
 	- **DELETE**: elimina il luogo di id <place_id> dell’organizzazione di id <organization_id>
 	    - _req_code_: 9
+	    - Authorization (@manager_admin_required)
 - **/organizations/<organization_id>/places/<place_id>/tracks**
     - **GET**: restituisce tutti i tracciamenti avvenuti per il luogo di id <place_id>
         - _req_code_: 10
+        - Authorization (@watcher_admin_required)
     - **POST**: aggiunte un nuovo tracciamneto al luogo di id <place_id>
         - _req_code_: 11
+        - Organization-Token
 - **/organizations/<organization_id>/tracks**
     - **GET** restituisce tutti i tracciamenti avvenuti per l'organizzazione di id <organization_id>
         - _req_code_: 12
+- **/login**
+    - **POST** se vengono inserite delle credeziali corrette restituisce un token
+- **/admins**
+    - **POST** crea un nuovo amministratore owner (può essere usata per creare un amministratore di sistema)
+- **/organizations/<organization_id>/admins**
+    - **GET** restituisce tutti gli ammininistratori dell'organizzazione di id <organizations_id>
+        - _req_code_: 13
+        - Authorization (@owner_admin_required)
+    - **POST** permette di creare un nuovo amministratore per l'organizzazione di id <organization id>
+        - _req_code_: 14
+        - Authorization (@owner_admin_required) 
 
 # Struttura del progetto
 - **setup.py** file con informazioni utili all'installazione del server in produzione
@@ -85,6 +155,16 @@ Ogni chiamata ad un API restituisce un valore (req_code) nell'header della rispo
         - test_client: crea un client che comunica con il bakckend
         - init_db: inizializza il database (_TESTDB.sqlite_) contenente le informazioni di tutte le organizzazioni
         - init_db_organization: inizalizza il db per l'organizzazione con id=1
+        - login(test_client, email, password="password"): effettua il login e restituisce la risposta
+        - get_organization_token: restituisce il token della prima organizzazione creata in init_db
+        - get_admin_token(test_client, email, password="password"):  restituisce il token dell'admin di email _email_
+    - **test_admins.py** batteria di test per gli admin
+        - test_get_admins_for_first_organization
+        - test_admin_creation
+    - **test_login.py** batteria di test per il login
+        - test_login_as_system_administrator
+        - test_login_as_owner_admin
+        - test_login_with_wrong_credentials
     - **test_models.py** batteria di test per i modelli
         - test_new_organization_public
         - test_new_organization_private
@@ -103,6 +183,7 @@ Ogni chiamata ad un API restituisce un valore (req_code) nell'header della rispo
         - test_get_tracks: verifica che i tracciamenti inserita in init_db_organization vengano restituiti correttamente
         - test_add_tracks: verifica che un nuovo tracciamento venga inserito correttamente
 - **k8s/** cartella contenente i diversi file di configurazioni per il funzionamento su [Kubernetes](https://kubernetes.io)
+    - **managed-certificate.yml** certificato usato in Google Cloud Platform
     - **postgrtes-credentials.yml** username e password per accedere ai db di Postgres
     - **postgrtes-deployment.yml** descrizione del deployment di Postgres
     - **postgrtes-pv.yml** descrizione del Persistent Volumes usato da Postgres
@@ -128,12 +209,23 @@ Ogni chiamata ad un API restituisce un valore (req_code) nell'header della rispo
             - aggiunge le _Resource_ che rispondono alle richieste HTTP
             - crea (in caso sia assente) il database per le informazioni sulle organizzazioni
             - carica il _Model_ delle organizzazioni
-    - **config.py** file contenente le configurazioni standard del server flask (usa la variabile d'ambiente _NOT_K8S_ per sapere in che ambiente si trova)
+    - **config.py** file contenente le configurazioni standard del server flask (vedere "Istruzione per l'uso" per sapere quali configurare)
     - **Models/** cartella contenente i modelli delle entità presenti nel database
-        - **Organization.py** Modello delle organizzazioni 
+        - **Admin.py** Modello degli admin
+        - **Organization.py** Modello delle organizzazioni
+        - **OrganizationsAdmins.py** Modello per la relazione tra admin e organizzazione 
         - **Place.py** Modello dei luoghi 
         - **Track.py** Modello per i tracciamenti
     - **Resources/** cartella contenente i metodi che rispondono alle varie richieste HTTP
+        - **ResourceClasse/** cartella contenente una gerarchia di classi con alla base _flask-restful.Resource_ che aggiungono metodo per l'ottenimento di risorse intermedie (Organizzazioni e Luoghi)
+            - **OrganizationResource.py** classe che si occupa di fornire le organizzazioni
+                - get_organization_unsafe(organization_id)
+                - get_organization(organization_id) 
+            - **PlaceResource.py** classe che si occupa di fornire i luoghi (deriva da _OrganizationResource_)
+                - get_place_unsafe(organization_id, place_id)
+                - get_place(organization_id, place_id)
+        - **AdminList.py** operazioni sugli admin non collegati ad alcuna organizzazione
+        - **OrganizationAdminList.py** operazioni sugli admin di una specifica organizzazione
         - **OrganizationList.py** operazioni sulla lista di tutte le organizzazioni
             - get: ritorna la lista di tutte le organizzazioni
             - post: esegue il parsing dei dati passati e crea una nuova organizzazione resitituendola nella risposta
@@ -154,6 +246,7 @@ Ogni chiamata ad un API restituisce un valore (req_code) nell'header della rispo
         - **TrackListForOrganization.py**
             - get(organization_id): ritorna la lista di tutti i tracciamenti avvenuti in tutti i lughi appartenenti all'organizzazione di id _organization_id_; ogni tracciamento contiene le informazioni sul luogo dove è stato tracciato
     - **Parser/** cartella contenente i parser per la lettura dei dati nelle varie richieste
+        - **AdminParser.py** parser per i parametri degli admin
         - **OrganizationParser.py** parser per i parametri delle organizzazioni
         - **PlaceParser.py** parser per i parametri dei luoghi
         - **TrackParser.py** parser per i parametr dei tracciamenti
@@ -166,15 +259,35 @@ Ogni chiamata ad un API restituisce un valore (req_code) nell'header della rispo
             - delete_place(place)
             - delete_organization
             - changed_organization_name(old_name, new_name)
-           
+    - **Routes/** cartella contenente le route non associabili ad una risorsa
+        - **Auth.py** 
+            - login
+    - **Utils/** cartella conenente funzioni di utility
+        - **AuthUtils.py**
+            - organization_token_required
+            - system_admin_required
+            - owner_admin_required
+            - manager_admin_required
+            - watcher_admin_required
+            - add_claims_to_access_token
+            
 # Databases
 Al momento viene usato un database sqlite3 creato e gestito localmente a dove viene eseguito il server.
-In caso venga eseguito tramite K8S viene usato un database Postgres.
+Si può scegiere di usare di usare Postgres settando correttamente le variabili d'abiente
 
 Per tenere traccia del numero di persone all'interno di un lugo viene usato [RethinkDB](https://rethinkdb.com).
 
 Esiste un database comune a tutte le organizzazioni dove è presente la tabella _organizations_. Viene poi creato un database per ogni organizzazione (con nome sha256(nome\_organizzazione)) dove sono presenti le tabelle _places_
 ## Tabelle Postgres
+### admins
+- id: Integer, PK
+- email: String(128)
+- password: String(128)
+-name: String(128)
+-surname: String(128)
+-is_system_admin: Bool
+-is_owner: Bool
+
 ### organizations
 - id: Integer, PK
 - name: String(128), _unique_
@@ -190,6 +303,14 @@ Esiste un database comune a tutte le organizzazioni dove è presente la tabella 
 - ldap_port: Integer, nullable
 - ldap_domain_component: String(128), nullable
 - ldap_common_name: String(128), nullable
+- token: String(32), _unique_
+
+###organizations_admins
+- id: Integer, PK
+- organization_id: Integer, FK 
+- admin_id: Integer, FK
+- role: enum(owner, manager, watcher)
+
 ### places
 - id: Integer
 - name: String(128)
@@ -204,6 +325,7 @@ Esiste un database comune a tutte le organizzazioni dove è presente la tabella 
 - max_num_people: Integer, nullable
 - approved: Bool
 - organization_id: Integer
+
 ### tracks
 - id: Integer
 - entered: Bool

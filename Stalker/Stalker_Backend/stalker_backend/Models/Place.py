@@ -20,33 +20,24 @@ class Place(db.Model):
     organization_id = db.Column(db.Integer, unique=False, index=False, nullable=False)
     tracks = db.relationship('Track', backref='places', lazy=True, cascade='delete')
 
-    def __init__(self, name, up_dx_lat, up_dx_long, up_sx_lat, up_sx_long, down_dx_lat, down_dx_long, down_sx_lat,
-                 down_sx_long, num_max_people, organization_id):
-        self.name = name
-        self.first_node_latitude = up_dx_lat
-        self.first_node_longitude = up_dx_long
-        self.second_node_latitude = up_sx_lat
-        self.second_node_longitude = up_sx_long
-        self.third_node_latitude = down_dx_lat
-        self.third_node_longitude = down_dx_long
-        self.fourth_node_latitude = down_sx_lat
-        self.fourth_node_longitude = down_sx_long
-        self.num_max_people = num_max_people
-        self.organization_id = organization_id
+    def __set_data(self, place):
+        self.name = place.get('name')
+        self.first_node_latitude = place.get('coordinates')[0].get('latitude')
+        self.first_node_longitude = place.get('coordinates')[0].get('longitude')
+        self.second_node_latitude = place.get('coordinates')[1].get('latitude')
+        self.second_node_longitude = place.get('coordinates')[1].get('longitude')
+        self.third_node_latitude = place.get('coordinates')[2].get('latitude')
+        self.third_node_longitude = place.get('coordinates')[2].get('longitude')
+        self.fourth_node_latitude = place.get('coordinates')[3].get('latitude')
+        self.fourth_node_longitude = place.get('coordinates')[3].get('longitude')
+        self.num_max_people = place.get('num_max_people')
 
-    def edit(self, name, up_dx_lat, up_dx_long, up_sx_lat, up_sx_long, down_dx_lat, down_dx_long, down_sx_lat,
-             down_sx_long, num_max_people):
+    def __init__(self, place):
+        self.__set_data(place)
+        self.organization_id = place['organization_id']
 
-        self.name = name
-        self.first_node_latitude = up_dx_lat
-        self.first_node_longitude = up_dx_long
-        self.second_node_latitude = up_sx_lat
-        self.second_node_longitude = up_sx_long
-        self.third_node_latitude = down_dx_lat
-        self.third_node_longitude = down_dx_long
-        self.fourth_node_latitude = down_sx_lat
-        self.fourth_node_longitude = down_sx_long
-        self.num_max_people = num_max_people
+    def edit(self, place):
+        self.__set_data(place)
         self.approved = False
 
     def set_approved(self, approved=True):
@@ -63,5 +54,6 @@ class Place(db.Model):
                 {'latitude': self.third_node_latitude, 'longitude': self.third_node_longitude},
                 {'latitude': self.fourth_node_latitude, 'longitude': self.fourth_node_longitude},
             ],
-            'approved': self.approved
+            'approved': self.approved,
+            'type': 'LuogoQuadrilatero'
         }

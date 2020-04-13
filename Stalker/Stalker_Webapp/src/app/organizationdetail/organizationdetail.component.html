@@ -1,0 +1,75 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{organization.name}}</mat-card-title>
+    <mat-card-subtitle>Modifica organizzazione</mat-card-subtitle>
+  </mat-card-header>
+  <form class="edit-form" [formGroup]="editForm" (ngSubmit)="editOrganization(editForm.value)">
+    <mat-card-content>
+      <mat-form-field appearance="fill">
+        <mat-label>name</mat-label>
+        <input matInput  type="text" formControlName="name" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>address</mat-label>
+        <input matInput type="text" formControlName="address" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>city</mat-label>
+        <input matInput type="text" formControlName="city" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>postalcode</mat-label>
+        <input matInput type="text" formControlName="postalCode" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>region</mat-label>
+        <input matInput type="text" formControlName="region" required>
+      </mat-form-field >
+      <mat-form-field appearance="fill">
+        <mat-label>nation</mat-label>
+        <input matInput type="text" formControlName="nation" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>email</mat-label>
+        <input matInput type="text" formControlName="email" required>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>phone_number</mat-label>
+        <input matInput type="text" formControlName="phoneNumber">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Type</mat-label>
+                <mat-select formControlName="type" (selectionChange)="onChange($event)">
+                  <mat-option value="Both">Both</mat-option>
+                  <mat-option value="Private">Private</mat-option>
+                  <mat-option value="Public" >Public</mat-option>
+                </mat-select>
+      </mat-form-field>
+      <div *ngIf="!isPublic">
+      <mat-form-field appearance="fill">
+        <mat-label>ldap_domain_component</mat-label>
+        <input matInput type="text" formControlName="ldap_domain_component">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>ldap_common_name</mat-label>
+        <input matInput type="text" formControlName="ldap_common_name" >
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>ldap_port</mat-label>
+        <input matInput type="number" formControlName="ldap_port">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>ldap_url</mat-label>
+        <input matInput type="text" formControlName="ldap_url">
+      </mat-form-field>
+    </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary"  [disabled]="!editForm.valid">Salva modifiche</button>
+    </mat-card-actions>
+  </form>
+</mat-card>
+<div>
+  Value:{{editForm.value | json}}
+</div>
+

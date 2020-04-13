@@ -1,5 +1,6 @@
 from stalker_backend import db_alchemy as db
 import enum
+import secrets
 
 
 class OrganizationType(enum.Enum):
@@ -27,40 +28,31 @@ class Organization(db.Model):
     ldap_port = db.Column(db.Integer(), index=False, unique=False, nullable=True)
     ldap_domain_component = db.Column(db.String(128), index=False, unique=False, nullable=True)
     ldap_common_name = db.Column(db.String(128), index=False, unique=False, nullable=True)
+    token = db.Column(db.String(32), index=False, unique=True, nullable=False)
 
-    #places = db.relationship("Place", backref="organization", lazy=True)
+    admins = db.relationship('Admin', secondary='organizations_admins')
 
-    def __init__(self, name, address, city, region, postal_code, nation, phone_number, email, organization_type,
-                 ldap_url=None, ldap_port=None, ldap_cn=None, ldap_dc=None):
-        self.name = name
-        self.address = address
-        self.city = city
-        self.region = region
-        self.postal_code = postal_code
-        self.nation = nation
-        self.phone_number = phone_number
-        self.email = email
-        self.organization_type = organization_type
-        self.ldap_url = ldap_url
-        self.ldap_port = ldap_port
-        self.ldap_common_name = ldap_cn
-        self.ldap_domain_component = ldap_dc
+    def __set_data(self, organization):
+        self.name = organization.get('name')
+        self.address = organization.get('address')
+        self.city = organization.get('city')
+        self.region = organization.get('region')
+        self.postal_code = organization.get('postal_code')
+        self.nation = organization.get('nation')
+        self.phone_number = organization.get('phone_number')
+        self.email = organization.get('email')
+        self.organization_type = organization.get('type')
+        self.ldap_url = organization.get('ldap_url')
+        self.ldap_port = organization.get('ldap_port')
+        self.ldap_common_name = organization.get('ldap_common_name')
+        self.ldap_domain_component = organization.get('ldap_domain_component')
 
-    def edit(self, name, address, city, region, postal_code, nation, phone_number, email, organization_type, ldap_url,
-             ldap_port, ldap_cn, ldap_dc):
-        self.name = name
-        self.address = address
-        self.city = city
-        self.region = region
-        self.postal_code = postal_code
-        self.nation = nation
-        self.phone_number = phone_number
-        self.email = email
-        self.organization_type = organization_type
-        self.ldap_url = ldap_url
-        self.ldap_port = ldap_port
-        self.ldap_common_name = ldap_cn
-        self.ldap_domain_component = ldap_dc
+    def __init__(self, organization):
+        self.__set_data(organization)
+        self.token = secrets.token_hex(16)
+
+    def edit(self, organization):
+        self.__set_data(organization)
 
     def to_dict(self):
         return {
@@ -81,5 +73,3 @@ class Organization(db.Model):
             'ldap_common_name': self.ldap_common_name,
         }
 
-    def __repr__(self):
-        return "<Organization {}>".format(self.name)

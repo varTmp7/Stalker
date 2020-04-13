@@ -8,6 +8,7 @@ build:
 deploy:
   kubectl:
     manifests:
+    - k8s/credentials.yml
     - k8s/postgres-credentials.yml
     - k8s/postgres-deployment.yml
     - k8s/postgres-pv.yml
@@ -18,5 +19,4 @@ deploy:
     - k8s/rethink-pvc.yml
     - k8s/rethink-service.yml
     - k8s/stalker-deployment.yml
-    - k8s/stalker-ingress.yml
     - k8s/stalker-service.yml

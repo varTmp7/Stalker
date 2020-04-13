@@ -1,0 +1,66 @@
+<mat-card>
+    <mat-card-title>Crea nuova Organizazzione</mat-card-title>
+    <form [formGroup]="editForm" (ngSubmit)="create(editForm.value)">
+        <mat-card-content>
+            <mat-form-field>
+                <input matInput type="text" placeholder="Organization's name" formControlName="name" required>
+                <mat-error>Name is required</mat-error>
+            </mat-form-field><br/>
+            <mat-form-field>
+                <input matInput type="text" placeholder="Address" formControlName="address" required>
+                <mat-error>Address is required</mat-error>
+            </mat-form-field><br/>
+            <mat-form-field>
+                <input matInput type="text" placeholder="City" formControlName="city" required>
+                <mat-error>City is required</mat-error>
+            </mat-form-field><br/>
+            <mat-form-field>
+                <input matInput type="text" placeholder="Region" formControlName="region" required>
+                <mat-error>Region is required</mat-error>
+            </mat-form-field><br/>
+            <mat-form-field>
+                <input matInput type="text" placeholder="PostalCode" formControlName="postalCode" required>
+                <mat-error>PostalCode is required</mat-error>
+            </mat-form-field><br/>
+            <mat-form-field>
+                <input matInput type="text" placeholder="Nation" formControlName="nation" required>
+                <mat-error>Nation is required</mat-error>
+            </mat-form-field><br/>
+            <mat-form-field>
+                <input matInput type="text" placeholder="PhoneNumber" formControlName="phoneNumber" required>
+                <mat-error>PhoneNumber is required</mat-error>
+            </mat-form-field><br/>
+            <mat-form-field>
+                <input matInput type="email" placeholder="Email" formControlName="email" required>
+                <mat-error>Email is required</mat-error>
+            </mat-form-field><br/>
+            <mat-form-field>
+                <mat-label>Type</mat-label>
+                <mat-select formControlName="type" (selectionChange)="onChange($event)">
+                  <mat-option value="Both">Both</mat-option>
+                  <mat-option value="Private">Private</mat-option>
+                  <mat-option value="Public" selected>Public</mat-option>
+                </mat-select>
+            </mat-form-field><br/>
+            <div *ngIf="!isPublic">
+                <mat-form-field>
+                    <input matInput type="text" placeholder="ldapUrl" formControlName="ldapUrl">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="number" placeholder="ldapPort" formControlName="ldapPort">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="text" placeholder="ldapCommonName" formControlName="ldapCommonName">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput type="text" placeholder="ldapDomainComponent" formControlName="ldapDomainComponent">
+                </mat-form-field>
+            </div>
+
+        </mat-card-content>
+
+        <mat-card-actions>
+            <button mat-raised-button color="primary" [disabled]="!editForm.valid">Create</button>
+        </mat-card-actions>
+    </form>
+</mat-card>

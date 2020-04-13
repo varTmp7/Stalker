@@ -1,15 +1,16 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: stalker-backend-ingress
+  name: stalker-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.global-static-ip-name: stalker-ip
+    networking.gke.io/managed-certificates: stalker-certificate
+    kubernetes.io/ingress.class: nginx
 spec:
   rules:
-    - host: stalker-backend.info
-      http:
+    - http:
         paths:
-          - path: /
+          - path: /*
             backend:
               serviceName: stalker-backend
-              servicePort: 5000
+              servicePort: 80

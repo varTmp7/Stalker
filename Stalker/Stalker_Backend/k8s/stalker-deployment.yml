@@ -18,16 +18,41 @@ spec:
       containers:
         - name: "stalker-backend"
           image: "jjocram/stalker-backend:latest" # Repo da dove scaricare l'immagine docker
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
           env:
-            - name: POSTGRES_USER
+            - name: DATABASE_TYPE
+              value: 'postgres://'
+            - name: BASE_POSTGRES_URL
+              value: 'postgresql-1-postgresql-svc:5432'
+            - name: RETHINK_URL
+              value: 'rethinkdb-proxy'
+            - name: TESTING
+              value: 'False'
+            - name: FLASK_DEBUG
+              value: 'False'
+            - name: EMAIL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: user
-                  name: postgres-credentials
+                  key: email_password
+                  name: credentials
+            - name: MAIL_SUPPRESS_SEND
+              value: 'False'
+            - name: POSTGRES_USER
+              value: 'postgres'
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: password
-                  name: postgres-credentials
+                  key: postgres_password
+                  name: credentials
+          livenessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          readinessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 3
+            periodSeconds: 3
