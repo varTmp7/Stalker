@@ -3,6 +3,7 @@ from stalker_backend.Models import Organization
 
 def test_new_organization_public():
     organization = Organization.Organization({'name': "Nome",
+                                              'image': "Image.URL",
                                               'address': "Indirizzo",
                                               'city': "città",
                                               'region': "regione",
@@ -12,6 +13,7 @@ def test_new_organization_public():
                                               'email': "organizzazione@org.it",
                                               'type': "PUBLIC"})
     assert organization.name == "Nome"
+    assert organization.image == "Image.URL"
     assert organization.address == "Indirizzo"
     assert organization.city == "città"
     assert organization.region == "regione"

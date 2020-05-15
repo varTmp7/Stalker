@@ -1,7 +1,7 @@
 FROM python:3.7.6
 
 RUN apt-get update && \
-    apt-get -y install netcat openssl && \
+    apt-get -y install netcat openssl dos2unix && \
     apt-get clean
 
 RUN mkdir /app
@@ -15,6 +15,7 @@ COPY stalker_backend/ stalker_backend/
 COPY wsgi.py ./
 COPY entrypoint.sh ./
 
+RUN dos2unix entrypoint.sh
 RUN chmod +x entrypoint.sh
 
 

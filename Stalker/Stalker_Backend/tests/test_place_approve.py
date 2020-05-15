@@ -38,5 +38,8 @@ def test_get_place_to_approve(test_client, init_db, init_db_organization):
                                headers={'Authorization': admin_token})
     assert response.status_code == 200, response.get_json()
 
-    places = response.get_json()['places']
+    print(response.get_json())
+    places = []
+    for org in response.get_json()['organizations']:
+        places += org['places']
     assert len(places) == 3

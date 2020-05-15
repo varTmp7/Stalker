@@ -13,6 +13,7 @@ from datetime import datetime
 def get_payload_organization_model():
     return {
         "name": "Nuova organizazione",
+        "image": "image.url",
         "address": "Via salcazzo, 9",
         "city": "Città",
         "region": "Regione",
@@ -82,6 +83,14 @@ def get_payload_admin_manager():
     }
 
 
+def get_payload_for_auth_employee():
+    return {
+        'auth_type': "ldapv3",
+        'username': "bob",
+        'password': 'password'
+    }
+
+
 def login(client, email, password):
     return client.post('/login', data={'email': email, 'password': password}, follow_redirects=True)
 
@@ -138,6 +147,7 @@ def init_db():
     db_alchemy.drop_all()
     db_alchemy.create_all()
     organization_1 = Organization.Organization({'name': "Organizzazione1",
+                                                'image': "image.url",
                                                 'address': "Indirizzo organizzazione 1",
                                                 'city': "Città organizzazione 1",
                                                 'region': "Regione organizzazione 1",
@@ -152,6 +162,7 @@ def init_db():
                                                 'ldap_domain_component': "dc=daf,dc=test,dc=it"})
 
     organization_2 = Organization.Organization({'name': "Organizzazione2",
+                                                'image': "image.url",
                                                 'address': "Indirizzo organizzazione 2",
                                                 'city': "Città organizzazione 2",
                                                 'region': "Regione organizzazione 2",
@@ -163,6 +174,7 @@ def init_db():
                                                 })
 
     organization_3 = Organization.Organization({'name': "Organizzazione3",
+                                                'image': "image.url",
                                                 'address': "Indirizzo organizzazione 3",
                                                 'city': "Città organizzazione 3",
                                                 'region': "Regione organizzazione 3",

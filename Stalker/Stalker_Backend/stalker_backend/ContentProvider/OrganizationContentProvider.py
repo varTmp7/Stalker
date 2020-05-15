@@ -8,7 +8,8 @@ from rethinkdb import RethinkDB
 from rethinkdb.errors import ReqlDriverError, ReqlOpFailedError
 
 from stalker_backend.Models import Place, Track
-from stalker_backend.config import get_db_url, get_rethink_url
+from stalker_backend.config import get_db_url, get_rethink_url, DATABASE_NAME
+
 
 class ExtendedQuery(Query):
     def get_or_404(self, ident, description=None):
@@ -46,7 +47,7 @@ class OrganizationContentProvider:
         self.rethink_connection.connect(get_rethink_url(), 28015).repl()
 
         # assumiamo per vero che il DB 'stalker_organizations' esista in quanto creato a priori (vedere __init__.py)
-        self.__rethink_db = self.rethink_connection.db('stalker_organizations')
+        self.__rethink_db = self.rethink_connection.db(DATABASE_NAME)
 
         if self.name_hash not in self.__rethink_db.table_list().run():
             self.__rethink_db.table_create(self.name_hash).run()

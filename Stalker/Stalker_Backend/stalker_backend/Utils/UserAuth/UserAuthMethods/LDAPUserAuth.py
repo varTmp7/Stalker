@@ -19,6 +19,8 @@ class LDAPUserAuth(UserAuthMethod):
         self._server = Server(f'{url}:{port}')
 
     def login(self, user, password) -> dict:
+        print(f'cn={user},{self._common_name},{self._domain_component}')
+        print(self._server)
         with Connection(self._server,
                         f'cn={user},{self._common_name},{self._domain_component}',
                         password, auto_bind=True) as connection:

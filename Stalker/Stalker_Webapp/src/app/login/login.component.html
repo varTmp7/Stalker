@@ -1,25 +1,32 @@
-<mat-card>
-  <mat-card-content>
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <h2>Log In</h2>
+<script src="../services/authentication.service.ts"></script>
+<mat-toolbar color="primary">
+  <span>Stalker</span>
+</mat-toolbar>
+
+<mat-card class="login-card">
+  <mat-card-header>
+    <mat-card-title>Login</mat-card-title>
+  </mat-card-header>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <mat-card-content>
       <mat-error *ngIf="error">
-        The username and password were not recognised
+        Wrong username or password
       </mat-error>
-      <mat-form-field>
-        <input matInput placeholder="Email" formControlName="username" required>
-        <mat-error>
-          Please provide a valid email address
-        </mat-error>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" autocomplete="on" name="email" type="email" required>
+        <mat-error>Email is required</mat-error>
       </mat-form-field>
-      <br/>
-      <mat-form-field>
-        <input matInput type="password" placeholder="Password" formControlName="password" required>
-        <mat-error>
-          Please provide a valid password
-        </mat-error>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" autocomplete="on" required>
+        <mat-error>Password is required</mat-error>
       </mat-form-field>
-      <br/>
-      <button mat-raised-button color="primary">Login</button>
-    </form>
-  </mat-card-content>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" type="submit">Login</button>
+    </mat-card-actions>
+  </form>
+  <a routerLink="/reset">Forgot your password?</a>
 </mat-card>

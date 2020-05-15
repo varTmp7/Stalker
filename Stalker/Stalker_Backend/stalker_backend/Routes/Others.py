@@ -1,4 +1,5 @@
-from flask import Blueprint, request, abort, Response
+from flask import Blueprint, request, abort, jsonify
+from flask_cors import cross_origin
 from flask_jwt_extended import jwt_required
 
 from stalker_backend.Utils.AuthUtils import system_admin_required
@@ -21,8 +22,6 @@ def approve_place(organization_id, place_id):
     approved = request.get_json().get('approved')
     if approved is not None and type(approved) is bool:
         place_resource.approve_place(organization_id, place_id, approved)
-        response = Response()
-        response.status_code = 200
-        return response
+        return jsonify({'ok': True}), 200
     else:
         return abort(400, description="Missing or wrong 'approved' key in json")

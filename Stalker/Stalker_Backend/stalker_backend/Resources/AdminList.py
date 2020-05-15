@@ -1,13 +1,19 @@
-from flask import abort
+from flask import abort, jsonify
+from flask_jwt_extended import jwt_required
 from flask_restful import Resource
 from ..Parser.AdminParser import admin_parser
 from stalker_backend.utils import send_email_to_new_admins
-from stalker_backend.Utils.AuthUtils import generate_password
+from stalker_backend.Utils.AuthUtils import generate_password, system_admin_required
 import hashlib
 from ..Models import Admin
 
 
 class AdminList(Resource):
+    @jwt_required
+    @system_admin_required
+    def get(self):
+        return jsonify(admins=[admin.to_dict(None) for admin in Admin.Admin.query.filter_by(is_system_admin=False).all()])
+
     @staticmethod
     def post():
         # TODO: al momento viene lasciato privo di autenticazione per motivi di test

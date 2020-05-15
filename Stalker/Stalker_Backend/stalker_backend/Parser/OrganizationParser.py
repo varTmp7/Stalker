@@ -3,6 +3,7 @@ from flask_restful import reqparse
 organization_parser = reqparse.RequestParser()
 
 organization_parser.add_argument('name', required=True, trim=True)
+organization_parser.add_argument('image', required=True, trim=True)
 organization_parser.add_argument('address', required=True, trim=True)
 organization_parser.add_argument('city', required=True, trim=True)
 organization_parser.add_argument('region', required=True, trim=True)

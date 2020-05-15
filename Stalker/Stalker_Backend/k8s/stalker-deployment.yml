@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: "stalker-backend"
-          image: "jjocram/stalker-backend:latest" # Repo da dove scaricare l'immagine docker
+          image: "jjocram/stalker-backend:0.5.2" # Repo da dove scaricare l'immagine docker
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
@@ -46,6 +46,31 @@ spec:
                 secretKeyRef:
                   key: postgres_password
                   name: credentials
+            - name: APP_ID
+              valueFrom:
+                secretKeyRef:
+                  key: app_id
+                  name: credentials
+            - name: NOTIFICATION_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: notification_auth_token
+                  name: credentials
+            - name: CLOUDINARY_CLOUD_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: cloud_name
+                  name: cloudinary-credentials
+            - name: CLOUDINARY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: api_key
+                  name: cloudinary-credentials
+            - name: CLOUDINARY_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: api_secret
+                  name: cloudinary-credentials
           livenessProbe:
             tcpSocket:
               port: 5000

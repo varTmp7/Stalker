@@ -18,7 +18,10 @@ Testato su MacOS 10.15.3, Python 3.7.6, Flask 1.1.1
     export TESTING=True
     export FLASK_DEBUG=True
     export EMAIL_PASSWORD={PASSWORD-DELL-ACCOUNT-GMAIL-vartmp7@gmail.com}
-    export MAIL_SUPPRESS_SEND=Flase #con True tenterà di mandare le email ai nuovi amministratori
+    export MAIL_SUPPRESS_SEND=False #con True tenterà di mandare le email ai nuovi amministratori
+    export CLOUDINARY_CLOUD_NAME=dyz86jubl
+    export CLOUDINARY_API_KEY=API-KEY #Si trova su cloudinary accessibile con email di gruppo
+    export CLOUDINARY_API_SECRET=API-SECRET #Si trova su cloudinary accessibile con email di gruppo
     ```
    - RETHINK_URL è l'url del database rethink, se si usa RethinkDB in locale con Docker (punto 3) usare localhost
    - DATABASE_TYPE è il tipo di database, i valori possibili, al momento sono:

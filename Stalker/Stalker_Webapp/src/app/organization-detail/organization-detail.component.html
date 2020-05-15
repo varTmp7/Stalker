@@ -1,0 +1,107 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{title}}</mat-card-title>
+    <mat-card-subtitle>{{subtitle}}</mat-card-subtitle>
+  </mat-card-header>
+  <div>
+    <img src="{{imagePreviewSrc}}" height="100px" width="100px" id="image-preview"/>
+    <button mat-button color="warn" (click)="uploadPhoto()"><mat-icon>file_upload</mat-icon>Upload photo</button>
+    <input hidden id="fileUpload" type="file" accept="image/png, image/jpeg, image/jpg"/>
+  </div>
+  <mat-card-content *ngIf="organization">
+    <mat-form-field appearance="fill">
+      <mat-label>Organization token</mat-label>
+      <input matInput disabled value="{{organization.token}}">
+    </mat-form-field>
+  </mat-card-content>
+  <form class="edit-form" [formGroup]="organizationForm" (ngSubmit)="createEditOrganization(organizationForm.value)">
+    <mat-card-content>
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" required/>
+        <mat-error>Name is required</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" required/>
+        <mat-error>Email is required</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>Phone number</mat-label>
+        <input matInput formControlName="phone_number" required/>
+        <mat-error>Phone number is required</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>Address</mat-label>
+        <input matInput formControlName="address" required/>
+        <mat-error>Address is required</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>City</mat-label>
+        <input matInput formControlName="city" required/>
+        <mat-error>City is required</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>Postal code</mat-label>
+        <input matInput formControlName="postal_code" required/>
+        <mat-error>Postal code is required</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>Region</mat-label>
+        <input matInput formControlName="region" required/>
+        <mat-error>Region is required</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>Nation</mat-label>
+        <input matInput formControlName="nation" required/>
+        <mat-error>Nation is required</mat-error>
+      </mat-form-field>
+      <br>
+      <mat-form-field appearance="fill">
+        <mat-label>Type</mat-label>
+        <mat-select matInput formControlName="type" (selectionChange)="onChange($event)"
+                    [disabled]="organization !== undefined" required>
+          <mat-option value="public">Public</mat-option>
+          <mat-option value="private">Private</mat-option>
+          <mat-option value="both">Both</mat-option>
+        </mat-select>
+        <mat-error>Type is required</mat-error>
+      </mat-form-field>
+      <br *ngIf="!isPublic">
+      <mat-form-field *ngIf="!isPublic" appearance="fill">
+        <mat-label>LDAP server URL</mat-label>
+        <input matInput formControlName="ldap_url"/>
+      </mat-form-field>
+      <br *ngIf="!isPublic">
+      <mat-form-field *ngIf="!isPublic" appearance="fill">
+        <mat-label>LDAP server PORT</mat-label>
+        <input matInput formControlName="ldap_port"/>
+      </mat-form-field>
+      <br *ngIf="!isPublic">
+      <mat-form-field *ngIf="!isPublic" appearance="fill">
+        <mat-label>LDAP Domain Component</mat-label>
+        <input matInput formControlName="ldap_domain_component"/>
+      </mat-form-field>
+      <br *ngIf="!isPublic">
+      <mat-form-field *ngIf="!isPublic" appearance="fill">
+        <mat-label>LDAP Common Name</mat-label>
+        <input matInput formControlName="ldap_common_name"/>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" [disabled]="!organizationForm.valid || currentAdmin.role === 'watcher'" *ngIf="organization !== undefined">
+        Edit
+      </button>
+      <button mat-raised-button color="primary" [disabled]="!organizationForm.valid || currentAdmin.role === 'watcher'" *ngIf="organization === undefined">
+        Create
+      </button>
+    </mat-card-actions>
+  </form>
+</mat-card>

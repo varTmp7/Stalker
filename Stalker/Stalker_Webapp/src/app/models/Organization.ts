@@ -1,3 +1,5 @@
+import {Place} from './Place';
+
 export enum OrganizationType {
   PRIVATE = 'private',
   PUBLIC = 'public',
@@ -7,6 +9,7 @@ export enum OrganizationType {
 export interface Organization {
   id: number;
   name: string;
+  image_url: string;
   address: string;
   city: string;
   postal_code: number;
@@ -19,4 +22,6 @@ export interface Organization {
   ldap_common_name?: string;
   ldap_port?: number;
   ldap_url?: string;
+  token?: string;
+  max_quota_area_places: number;
 }

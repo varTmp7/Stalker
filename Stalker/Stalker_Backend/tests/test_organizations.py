@@ -63,6 +63,7 @@ def test_create_new_organization(test_client, init_db, init_db_organization):
     organization_created = response.get_json()['organization']
     assert check_admin_permission(2, Organization.query.get(organization_created['id']))
     assert organization_created['name'] == "Nuova organizazione"
+    assert organization_created['image_url'] == "image.url"
     assert organization_created['address'] == "Via salcazzo, 9"
     assert organization_created['city'] == "Città"
     assert organization_created['region'] == "Regione"

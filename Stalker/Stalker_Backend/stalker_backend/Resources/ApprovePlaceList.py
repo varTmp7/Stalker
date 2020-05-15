@@ -14,12 +14,18 @@ class ApprovePlaceList(Resource):
     def get(self):
         organizations = [organization for organization in Organization.query.all()]
         response = {
-            'places': []
+            'organizations': []
         }
+        index = 0
         for organization in organizations:
             content_provider = OrganizationContentProvider(organization.name)
             places_to_approve = content_provider.session.query(Place).filter(Place.approved == False).all()
+            if len(places_to_approve) == 0:
+                continue
+            response['organizations'].append(organization.to_dict())
+            response['organizations'][index]['places'] = []
             for place in places_to_approve:
-                response['places'].append(place.to_dict())
+                response['organizations'][index]['places'].append(place.to_dict())
+            index += 1
 
         return response

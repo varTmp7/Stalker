@@ -1,6 +1,9 @@
+from datetime import timedelta
 from sys import exit
 from os import environ
 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+DATABASE_NAME = 'stalker_organizations_0_5'
 
 def get_rethink_url():
     return environ.get('RETHINK_URL')  # "localhost"
@@ -44,7 +47,7 @@ class Config:
     FLASK_DEBUG = environ["FLASK_DEBUG"]
     SECRET_KEY = "dev"  # change before production
     # Database
-    SQLALCHEMY_DATABASE_URI = get_db_url('stalker_organizations')
+    SQLALCHEMY_DATABASE_URI = get_db_url(DATABASE_NAME)
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # Flask-Mail
@@ -55,3 +58,5 @@ class Config:
     MAIL_USERNAME = "vartmp7@gmail.com"
     MAIL_PASSWORD = environ["EMAIL_PASSWORD"]
     MAIL_SUPPRESS_SEND = environ["MAIL_SUPPRESS_SEND"]
+    # JWT
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(hours=1)

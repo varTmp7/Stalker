@@ -1,0 +1,28 @@
+mat-form-field {
+  margin-left: 1em;
+  margin-top: 1em;
+}
+
+mat-form-field.mat-form-field {
+  font-size: 12px;
+}
+
+.sidenav-container {
+  height: 100%;
+}
+
+.sidenav {
+  width: 200px;
+  margin-top: 5em;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+

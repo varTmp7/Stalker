@@ -1,0 +1,38 @@
+
+
+<form [formGroup]="placeForm" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" required/>
+    <mat-error>Name is required</mat-error>
+  </mat-form-field>
+  <div formArrayName="coordinates">
+    <div *ngFor="let coordinate of coordinates.controls; let i = index">
+      <mat-form-field [formGroup]="coordinate" appearance="fill">
+        <mat-label>Latitude {{i+1}}</mat-label>
+        <input matInput formControlName="latitude" required readonly disabled/>
+        <mat-error>Latitude {{i+1}} is required</mat-error>
+      </mat-form-field>
+      <mat-form-field [formGroup]="coordinate" appearance="fill">
+        <mat-label>Longitude {{i+1}}</mat-label>
+        <input matInput formControlName="longitude" required readonly disabled/>
+        <mat-error>Longitude {{i+1}} is required</mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+  <mat-form-field appearance="fill">
+    <mat-label>Max. number of people</mat-label>
+    <input matInput formControlName="num_max_people"/>
+  </mat-form-field>
+
+  <br>
+  <button *ngIf="place !== undefined" mat-raised-button color="primary">Edit</button>
+  <button *ngIf="place === undefined" mat-raised-button color="primary">Create</button>
+</form>
+
+<app-map [coordinatesIn]="coordinates" (coordinatesOut)="onMapChanged($event)" class="map-place-detail"></app-map>
+
+
+
+
+<app-tracks-list [organization]="organization"></app-tracks-list>

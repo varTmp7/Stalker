@@ -1,0 +1,43 @@
+<a *ngIf="currentAdmin.role === 'owner' || currentAdmin.role === 'manager'" mat-raised-button color="primary" routerLink="../../../create-place">New place</a>
+<br>
+<mat-form-field>
+  <mat-label>Filter</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Ex name">
+</mat-form-field>
+
+<div *ngIf="places !== undefined; else noPlaces">
+  <table mat-table [dataSource]="places" class="mat-elevation-z8" matSort>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let element">{{element.name}}</td>
+    </ng-container>
+    <ng-container matColumnDef="number_of_people">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header># of people</th>
+      <td mat-cell *matCellDef="let element"><span class="dot" [style.background]="getColor(element.number_of_people,element.num_max_people)"></span>
+        {{element.number_of_people}} / {{element.num_max_people}}</td>
+    </ng-container>
+    <ng-container matColumnDef="manage">
+      <th mat-header-cell *matHeaderCellDef>Manage</th>
+      <td mat-cell *matCellDef="let element">
+        <button *ngIf="currentAdmin.role === 'owner' || currentAdmin.role === 'manager'" mat-icon-button color="primary" aria-label="Manage place" routerLink="{{element.id}}">
+          <mat-icon>info</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef>Delete</th>
+      <td mat-cell *matCellDef="let element">
+        <button *ngIf="currentAdmin.role === 'owner' || currentAdmin.role === 'manager'" mat-icon-button color="warn" aria-label="Delete place" (click)="deletePlace(element)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+
+<ng-template #noPlaces>
+  <h2>No places found</h2>
+</ng-template>

@@ -1,5 +1,5 @@
 from .config_test import test_client, init_db, init_db_organization, get_payload_track_model_entered, get_admin_token, \
-    get_organization_token
+    get_organization_token, get_payload_for_auth_employee
 
 from datetime import datetime
 
@@ -84,8 +84,18 @@ def test_add_track_not_authenticated(test_client, init_db, init_db_organization)
     assert response.headers['req_code'] == '11'
 
 
-def test_get_all_tracks_of_an_organization(test_client, init_db, init_db_organization):
-    response = test_client.get("/organizations/1/tracks",
-                               headers={'Authorization': get_admin_token(test_client, 'o_a@gmail.com')})
+def test_get_all_tracks_of_an_employee_of_an_organization(test_client, init_db, init_db_organization):
+    response_add_track = test_client.post("/organizations/1/places/1/tracks",
+                                          json=get_payload_track_model_entered(),
+                                          headers={'Organization-Token': get_organization_token()})
+    assert response_add_track.status_code == 200, response_add_track.get_json()
 
-    assert response.status_code == 200, response.get_json()
+    response_track = test_client.post("/organizations/1/tracks",
+                                      json=get_payload_for_auth_employee(),
+                                      headers={'Organization-Token': get_organization_token()})
+
+    assert response_track.status_code == 200, response_track.get_json()
+    tracks = response_track.get_json()
+    assert tracks['user_info']['uid_number'] == 1002
+    assert tracks['user_info']['username'] == 'bob'
+    assert len(tracks['tracks']) == 1

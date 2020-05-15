@@ -2,6 +2,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
 from sys import exit
+
+from sqlalchemy_utils import database_exists, create_database
+
 from . import config
 from rethinkdb import RethinkDB
 from rethinkdb.errors import ReqlDriverError
@@ -13,6 +16,7 @@ db_alchemy = SQLAlchemy()
 rethink_db = RethinkDB()
 jwt = JWTManager()
 mail = Mail()
+cors = CORS()
 
 
 def _register_blueprints(app):
@@ -34,6 +38,8 @@ def _register_api():
     from stalker_backend.Resources.ApprovePlaceList import ApprovePlaceList
     from stalker_backend.Resources.OrganizationAdminsEditRoleAndDelete import OrganizationAdminsEditRoleAndDelete
     from stalker_backend.Resources.AdminItem import AdminItem
+    from stalker_backend.Resources.OrganizationsAdminList import OrganizationsAdminList
+    from stalker_backend.Resources.ImageList import ImageList
 
     from .Resources.ResourceClass.OrganizationResource import OrganizationResource
     from .Resources.ResourceClass.PlaceResource import PlaceResource
@@ -57,7 +63,7 @@ def _register_api():
                      resource_class_kwargs={'place_resource': place_resource})
     api.add_resource(TrackListForOrganization,
                      '/organizations/<organization_id>/tracks',
-                     resource_class_kwargs={'place_resource': place_resource})
+                     resource_class_kwargs={'organization_resource': organization_resource})
     api.add_resource(OrganizationAdminList,
                      '/organizations/<organization_id>/admins',
                      resource_class_kwargs={'organization_resource': organization_resource})
@@ -70,6 +76,8 @@ def _register_api():
                      '/admins/<admin_id>')
     api.add_resource(ApprovePlaceList,
                      '/place-to-approve')
+    api.add_resource(OrganizationsAdminList, '/organizations-admin')
+    api.add_resource(ImageList, '/images')
     return api
 
 
@@ -84,8 +92,11 @@ def _check_database():
 
 
 def _initialize_database():
-    if 'stalker_organizations' not in rethink_db.db_list().run():
-        rethink_db.db_create('stalker_organizations').run()
+    if config.DATABASE_NAME not in rethink_db.db_list().run():
+        rethink_db.db_create(config.DATABASE_NAME).run()
+
+    if not database_exists(db_alchemy.engine.url):
+        create_database(db_alchemy.engine.url)
 
     from .Models import Organization, Admin, OrganizationsAdmins
     db_alchemy.create_all()
@@ -101,7 +112,7 @@ def _initialize_database():
 
 
 def _initialize_extension(app):
-    CORS(app)
+    cors.init_app(app, supports_credentials=True)
     db_alchemy.init_app(app)
     jwt.init_app(app)
     mail.init_app(app)

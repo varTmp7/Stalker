@@ -44,7 +44,6 @@ class TrackListForPlace(Resource):
                     user_info = user_auth.login(track['username'], track['password'])
                     track['place_id'] = place_id
                     del track['username']
-                    print(track)
                     new_track = Track({**track, **user_info})
                 except Exception as e:
                     print("Something went wrong while adding a new track")

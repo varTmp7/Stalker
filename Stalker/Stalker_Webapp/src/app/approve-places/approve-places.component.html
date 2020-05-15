@@ -1,0 +1,40 @@
+<!--<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""/>
+
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+        crossorigin="">
+</script>
+-->
+
+<table mat-table [dataSource]="organizationsPlacesToApproveData" class="mat-elevation-z8">
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let element">{{element.name}}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="map">
+    <th mat-header-cell *matHeaderCellDef>Map</th>
+    <td mat-cell *matCellDef="let element"><div id="leafletmap"><div class="map" id="map{{element.id}}" style="width: 180px; height: 180px;"></div></div></td>
+  </ng-container>
+
+  <ng-container matColumnDef="approve">
+    <th mat-header-cell *matHeaderCellDef>Approve</th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button color="green" aria-label="Approve place" (click)="approvePlace(element)">
+        <mat-icon>done</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  <ng-container matColumnDef="organizationHeader">
+    <td colspan="999" mat-cell *matCellDef="let element"><strong style="color: green">{{element.name}}</strong>
+    </td>
+  </ng-container>
+
+  <tr mat-row *matRowDef="let row; columns: ['organizationHeader']; when: isOrganization"></tr>
+</table>

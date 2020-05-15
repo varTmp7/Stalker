@@ -1,0 +1,34 @@
+<mat-toolbar color="primary">
+  <span>Stalker</span>
+  <span *ngIf="currentAdmin.role !== 'system'">
+    <mat-form-field>
+    <mat-label>Organization</mat-label>
+    <mat-select (selectionChange)="handleOnChangeOrganization($event)" value="{{selectedOrganizationId}}">
+      <mat-option *ngFor="let organization of organizations" value="{{organization.id}}">{{organization.name}}</mat-option>
+      <mat-option *ngIf="currentAdmin.role === 'owner' && currentAdmin.max_quota_organizations > 0" value="-1" style="background-color: #3f51b5; color: white" routerLink="create-organization">New organization</mat-option>
+    </mat-select>
+  </mat-form-field>
+  </span>
+</mat-toolbar>
+
+<mat-sidenav-container class="dashboard-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+               [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+               [mode]="(isHandset$ | async) ? 'over' : 'side'"
+               [opened]="(isHandset$ | async) === false">
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item routerLink="admin-detail">Admin info</a>
+      <a *ngIf="currentAdmin.role!=='none' && (currentAdmin.role === 'system' || (selectedOrganization !== undefined && currentAdmin.role === 'owner'))" mat-list-item routerLink="admins-list">Administrators</a>
+      <a *ngIf="selectedOrganization !== undefined && currentAdmin.role !=='none' && currentAdmin.role !== 'system'" mat-list-item routerLink="organization-detail/{{selectedOrganization.id}}">Organization</a>
+      <a *ngIf="selectedOrganization !== undefined && currentAdmin.role !=='none' && currentAdmin.role !== 'system'" mat-list-item routerLink="organization-detail/{{selectedOrganization.id}}/place-list">Places</a>
+      <a *ngIf="selectedOrganization !== undefined && currentAdmin.role !=='none' && currentAdmin.role !== 'system'" mat-list-item routerLink="report">Report</a>
+      <a *ngIf="currentAdmin.role !=='none' && currentAdmin.role === 'system'" mat-list-item routerLink="approve-places">Places to approve</a>
+      <a *ngIf="selectedOrganization !== undefined && currentAdmin.role !=='none' && currentAdmin.role === 'owner'" mat-list-item style="color: darkred" (click)="deleteOrganization()">Delete organization</a>
+      <a mat-list-item (click)="logout()">Logout</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

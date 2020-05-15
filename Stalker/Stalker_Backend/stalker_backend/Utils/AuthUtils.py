@@ -1,7 +1,7 @@
 from functools import wraps
 
 from flask import request, abort
-from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims
+from flask_jwt_extended import verify_jwt_in_request, get_jwt_claims, get_jwt_identity
 
 from stalker_backend.Models.Organization import Organization
 from stalker_backend import jwt
@@ -70,7 +70,7 @@ def manager_admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
-        claims = get_jwt_claims()
+        claims = get_jwt_identity()
         if claims['role'] != 'owner' and claims['role'] != 'manager':
             abort(403, description='Owner admin and Manager admin only!')
         else:
@@ -83,7 +83,7 @@ def watcher_admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
         verify_jwt_in_request()
-        claims = get_jwt_claims()
+        claims = get_jwt_identity()
         if claims['role'] != 'owner' and claims['role'] != 'manager' and claims['role'] != 'watcher':
             abort(403, description='Owner admin, Manager admin and Watcher admin only!')
         else:

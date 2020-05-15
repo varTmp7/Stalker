@@ -4,7 +4,7 @@ from flask_restful import Resource
 from stalker_backend.Resources.ResourceClass.OrganizationResource import OrganizationResource
 
 from ..Parser.OrganizationParser import organization_parser
-from ..Models import Organization
+from ..Models import Organization, Admin
 
 from flask_jwt_extended import jwt_required
 from stalker_backend.Utils.AuthUtils import watcher_admin_required, manager_admin_required, owner_admin_required
@@ -60,5 +60,10 @@ class OrganizationItem(Resource):
         response = Response()
         response.status_code = 200
         response.headers['req_code'] = 4
+
+        # Update admin max quota
+        admin = Admin.Admin.query.get(admin_representation['id'])
+        admin.max_quota_organizations += 1
+        Admin.db.session.commit()
         return response
 

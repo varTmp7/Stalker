@@ -1,42 +1,39 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { OrganizationsComponent } from './organizations/organizations.component';
-import { PlacesComponent } from './places/places.component';
-import { NewplaceComponent } from './newplace/newplace.component';
-import { TracksComponent } from './tracks/tracks.component';
-import { PlacedetailComponent } from './placedetail/placedetail.component';
-import { OrganizationdetailComponent } from './organizationdetail/organizationdetail.component';
-import { NewOrganizationComponent } from './new-organization/new-organization.component';
-import { AdministratorsComponent } from './administrators/administrators.component';
-import { AdministratorsListComponent } from './administrators-list/administrators-list.component';
-import { NewAdministratorComponent } from './new-administrator/new-administrator.component';
-import { LoginComponent } from './login/login.component';
-import { AdministratorDetailsComponent } from './administrator-details/administrator-details.component';
-import { AuthGuard } from './_helpers/auth.guard';
+import {RouterModule, Routes} from '@angular/router';
+import {LoginComponent} from './login/login.component';
+import {DashboardComponent} from './dashboard/dashboard.component';
+import {AuthGuard} from './guards/AuthGuard';
+import {AdminDetailComponent} from './admin-detail/admin-detail.component';
+import {AdminListComponent} from './admin-list/admin-list.component';
+import {OrganizationDetailComponent} from './organization-detail/organization-detail.component';
+import {PlaceDetailComponent} from './place-detail/place-detail.component';
+import {PlacesListComponent} from './places-list/places-list.component';
+import {ReportComponent} from './report/report.component';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
+import {ApprovePlacesComponent} from "./approve-places/approve-places.component";
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'administrator', component: AdministratorDetailsComponent },
-  { path: 'administrators', component: AdministratorsComponent,
-     children: [
-       {path: ':organizationID', component:AdministratorsListComponent},
-       {path: ':organizationID/newAdministrator', component: NewAdministratorComponent}
-     ]
-  },
-  { path: 'organizations', component: OrganizationsComponent },
-  { path: 'newOrganization', component: NewOrganizationComponent },
-  { path: 'organizations/:organization_id/organizationdetail', component: OrganizationdetailComponent },
-  { path: 'organizations/:organization_id/places', component: PlacesComponent },
-  { path: 'organizations/:organization_id/newplace', component: NewplaceComponent },
-  { path: 'organizations/:organization_id/places/:place_id/placedetail', component: PlacedetailComponent },
-  { path: 'organizations/:organization_id/places/:place_id/tracks', component: TracksComponent },
-  // otherwise redirect to login
-  { path: '**', redirectTo: 'login' }
-  
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], children: [
+      { path: 'dashboard', redirectTo: 'login', pathMatch: 'full'},
+      { path: 'create-admin', component: AdminDetailComponent, canActivate: [AuthGuard]},
+      { path: 'admin-detail', component: AdminDetailComponent, canActivate: [AuthGuard]},
+      { path: 'admins-list', component: AdminListComponent, canActivate: [AuthGuard]},
+      { path: 'organization-detail/:organization_id', component: OrganizationDetailComponent, canActivate: [AuthGuard]},
+      { path: 'organization-detail/:organization_id/place-list', component: PlacesListComponent, canActivate: [AuthGuard]},
+      { path: 'create-organization', component: OrganizationDetailComponent, canActivate: [AuthGuard]},
+      { path: 'organization-detail/:organization_id/place-list/:place_id', component: PlaceDetailComponent, canActivate: [AuthGuard]},
+      { path: 'create-place', component: PlaceDetailComponent, canActivate: [AuthGuard]},
+      { path: 'report', component: ReportComponent, canActivate: [AuthGuard]},
+      { path: 'approve-places', component: ApprovePlacesComponent, canActivate: [AuthGuard]}
+    ]},
+  { path: 'login', component: LoginComponent},
+  { path: 'reset', component: PasswordResetComponent},
+  { path: '**', redirectTo: 'dashboard'}
 ];
 
+
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: [ RouterModule.forRoot(routes) ],
+  exports: [ RouterModule ]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

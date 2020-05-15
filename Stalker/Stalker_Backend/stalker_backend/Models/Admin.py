@@ -10,6 +10,7 @@ class Admin(db.Model):
     surname = db.Column(db.String(128), unique=False, nullable=False)
     is_system_admin = db.Column(db.Boolean, unique=False, nullable=False, default=False)
     is_owner = db.Column(db.Boolean, unique=False, nullable=False, default=False)
+    max_quota_organizations = db.Column(db.Integer, unique=False, nullable=False, default=10)
 
     organizations = db.relationship('Organization', secondary='organizations_admins')
 
@@ -51,4 +52,5 @@ class Admin(db.Model):
             'name': self.name,
             'surname': self.surname,
             'role': role,
+            'max_quota_organizations': self.max_quota_organizations
         }

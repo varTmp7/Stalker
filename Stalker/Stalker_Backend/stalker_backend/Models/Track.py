@@ -31,5 +31,6 @@ class Track(db.Model):
             'uid_number': self.uidNumber,
             'username': self.username,
             'name': self.name,
-            'surname': self.surname
+            'surname': self.surname,
+            'place_id': self.place_id
         }

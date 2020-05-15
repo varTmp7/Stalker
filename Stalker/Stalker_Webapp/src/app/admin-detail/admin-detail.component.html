@@ -1,0 +1,43 @@
+<form [formGroup]="adminForm" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name">
+    <mat-error>Name is required</mat-error>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill">
+    <mat-label>Surname</mat-label>
+    <input matInput formControlName="surname">
+    <mat-error>Surname is required</mat-error>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email">
+    <mat-error>Email is required</mat-error>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" *ngIf="currentAdmin !== null">
+    <mat-label>Password</mat-label>
+    <input type="password" matInput formControlName="password" (change)="adminForm.controls.confirmpassword.updateValueAndValidity()">
+    <mat-error>password must contain at least 8 characters, a capital letter, a small letter
+      and a number</mat-error>
+  </mat-form-field>
+  <br/>
+  <mat-form-field appearance="fill" *ngIf="currentAdmin !== null">
+    <mat-label>Confirm password</mat-label>
+    <input type="password" matInput formControlName="confirmpassword" >
+    <mat-error>confirm password must be equal to password</mat-error>
+  </mat-form-field>
+    <mat-form-field appearance="fill" *ngIf="currentAdmin === null">
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role">
+        <mat-option value="WATCHER" *ngIf="operatingAdmin.role === 'owner'">Watcher</mat-option>
+        <mat-option value="MANAGER" *ngIf="operatingAdmin.role === 'owner'">Manager</mat-option>
+        <mat-option value="OWNER" *ngIf="operatingAdmin.role === 'system'">Owner</mat-option>
+      </mat-select>
+    </mat-form-field>
+  <br>
+  <button *ngIf="currentAdmin !== null" mat-raised-button color="primary" >Edit</button>
+  <button *ngIf="currentAdmin === null" mat-raised-button color="primary">Create</button>
+</form>

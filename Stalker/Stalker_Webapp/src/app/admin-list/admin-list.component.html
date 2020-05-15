@@ -1,0 +1,51 @@
+<a mat-raised-button color="primary" routerLink="../create-admin">New admin</a>
+<br>
+<mat-form-field>
+  <mat-label>Filter</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. name">
+</mat-form-field>
+<div *ngIf="admins; else noAdmins">
+  <table mat-table [dataSource]="admins" class="mat-elevation-z8" matSort>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+      <td mat-cell *matCellDef="let element">{{element.name}}</td>
+    </ng-container>
+    <ng-container matColumnDef="surname">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Surname</th>
+      <td mat-cell *matCellDef="let element">{{element.surname}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+      <td mat-cell *matCellDef="let element">{{element.email}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="role">
+      <th mat-header-cell *matHeaderCellDef>Role</th>
+      <td mat-cell *matCellDef="let element">
+
+        <mat-select [compareWith]="compareRole" *ngIf="element.role !== 'owner'" value="{{element.role.toUpperCase()}}" (selectionChange)="changedRole($event)">
+          <mat-option value='{"role": "MANAGER", "id": "{{element.id}}"}'>Manager</mat-option>
+          <mat-option value='{"role": "WATCHER", "id": "{{element.id}}"}'>Watcher</mat-option>
+        </mat-select>
+        <span *ngIf="element.role === 'owner'">{{element.role.charAt(0).toUpperCase() + element.role.slice(1)}}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef>Delete</th>
+      <td mat-cell *matCellDef="let element">
+        <button *ngIf="element.role !== 'owner'" mat-icon-button color="warn" aria-label="Delete admin" (click)="deleteAdmin(element)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+<ng-template #noAdmins>
+  <h2>No administrators found</h2>
+</ng-template>

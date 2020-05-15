@@ -14,7 +14,7 @@ class Organization(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=False, unique=True, nullable=False)
-    # image
+    image = db.Column(db.String(2048), index=False, unique=False, nullable=False)
     address = db.Column(db.String(128), index=False, unique=False, nullable=False)
     city = db.Column(db.String(128), index=False, unique=False, nullable=False)
     region = db.Column(db.String(128), index=False, unique=False, nullable=False)
@@ -29,11 +29,13 @@ class Organization(db.Model):
     ldap_domain_component = db.Column(db.String(128), index=False, unique=False, nullable=True)
     ldap_common_name = db.Column(db.String(128), index=False, unique=False, nullable=True)
     token = db.Column(db.String(32), index=False, unique=True, nullable=False)
+    max_quota_area_places = db.Column(db.Float, unique=False, nullable=False, default=1000.0)
 
     admins = db.relationship('Admin', secondary='organizations_admins')
 
     def __set_data(self, organization):
         self.name = organization.get('name')
+        self.image = organization.get('image')
         self.address = organization.get('address')
         self.city = organization.get('city')
         self.region = organization.get('region')
@@ -58,7 +60,7 @@ class Organization(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            # 'image': organization.image,
+            'image_url': self.image,
             'address': self.address,
             'city': self.city,
             'region': self.region,
@@ -71,5 +73,6 @@ class Organization(db.Model):
             'ldap_port': self.ldap_port,
             'ldap_domain_component': self.ldap_domain_component,
             'ldap_common_name': self.ldap_common_name,
+            'max_quota_area_places': self.max_quota_area_places
         }
 

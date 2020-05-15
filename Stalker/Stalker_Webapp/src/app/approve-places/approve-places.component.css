@@ -1,0 +1,17 @@
+@import "https://unpkg.com/leaflet@1.6.0/dist/leaflet.css";
+
+table {
+  width: 100%;
+}
+
+.map-container {
+  height: 180px;
+}
+
+.map-frame {
+  height: 100%;
+}
+
+#map {
+  height: 100%;
+}
